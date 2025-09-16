@@ -9,6 +9,8 @@
     - [How does react works:](#how-does-react-works)
     - [Key Features of React](#key-features-of-react)
     - [ReactJS Lifecycle](#reactjs-lifecycle)
+- [JSX](#jsx)
+    - [How JSX Works](#how-jsx-works)
 
 
 # Introduction
@@ -130,4 +132,26 @@ here,
 Every React Component has a lifecycle of its own, the lifecycle of a component can be defined as the series of methods that are invoked in different stages of the component’s existence.
 
 ![](./images/introduction/reactjs_lifecycle.webp)
+
+
+# JSX
+
+JSX stands for JavaScript XML, and it is a special syntax used in React to simplify building user interfaces. JSX allows you to write HTML-like code directly inside JavaScript, enabling you to create UI components more efficiently. Although JSX looks like regular HTML, it’s actually a syntax extension for JavaScript.
+
+![](./images/jsx/react_jsx-1.webp)
+
+Example:
+
+```jsx
+const element = <h1>Hello, world!</h1>;
+```
+`<h1>Hello, world!</h1>` is a JSX element, similar to HTML, that represents a heading tag. JSX is converted into JavaScript behind the scenes, where React uses React.createElement() to turn the JSX code into actual HTML elements that the browser can understand.
+
+### How JSX Works
+When React processes this JSX code, it converts it into JavaScript using Babel. This JavaScript code then creates real HTML elements in the browser’s DOM . which is how your web page gets displayed.
+
+![](./images/jsx/how_jsx_works.webp)
+
+**Note:** Babel acts as a translator for your React code. It takes modern JavaScript (like JSX) that browsers don't understand directly. Finally, it converts it into older, compatible JavaScript so your application runs everywhere.
+
 
