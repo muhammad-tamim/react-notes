@@ -13,6 +13,11 @@
 - [jsx](#jsx)
     - [How JSX Works:](#how-jsx-works)
     - [JSX rules:](#jsx-rules)
+- [Props, callback function, context api](#props-callback-function-context-api)
+    - [props](#props)
+    - [Passing Data Using Callback Functions:](#passing-data-using-callback-functions)
+    - [Context API](#context-api)
+    - [what is the difference between props, callback function and context api](#what-is-the-difference-between-props-callback-function-and-context-api)
 
 
 
@@ -312,3 +317,294 @@ export default App;
 
 ---
 
+
+# Props, callback function, context api
+
+### props
+
+Props are used to pass data from a parent component to a child component in React. props are read-only means a child cannot modify the props. 
+
+Note: props is received as an object
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  return (
+    <div>
+      <UserInfo name="Tamim" age="20" country="BD"></UserInfo>
+    </div>
+  );
+};
+
+export default App;
+
+const UserInfo = (props) => {
+  console.log(props) // {name: 'Tamim', age: '20', country: 'BD'}
+
+  return (
+    <h1>Hello</h1>
+  )
+}
+```
+
+- **Passing Multiple Props:**
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  return (
+    <div>
+      <UserInfo name="Tamim" age="20" country="BD"></UserInfo>
+    </div>
+  );
+};
+
+export default App;
+
+const UserInfo = (props) => {
+  return (
+    <div>
+      <h1>Name: {props.name}</h1>
+      <h1>Age: {props.age}</h1>
+      <h1>Country: {props.country}</h1>
+    </div>
+  )
+}
+```
+
+- **Destructuring props:**
+
+Instead of writing props.name, props.age, etc., you can use destructuring.
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  return (
+    <div>
+      <UserInfo name="Tamim" age="20" country="BD"></UserInfo>
+    </div>
+  );
+};
+
+export default App;
+
+const UserInfo = ({ name, age, country }) => {
+
+  return (
+    <div>
+      <h1>Name: {name}</h1>
+      <h1>Age: {age}</h1>
+      <h1>Country: {country}</h1>
+    </div>
+  )
+}
+```
+
+- **Default Props:**
+
+If a prop is not passed, you can set a default value.
+
+```js
+import React from 'react';
+
+const App = () => {
+  return (
+    <div>
+      <UserInfo name="Tamim" age="20" country="BD"></UserInfo>
+    </div>
+  );
+};
+
+export default App;
+
+const UserInfo = ({ name, age, country, single = "Yes" }) => {
+
+  return (
+    <div>
+      <h1>Name: {name}</h1>
+      <h1>Age: {age}</h1>
+      <h1>Country: {country}</h1>
+      <h1>Single: {single}</h1>
+    </div>
+  )
+}
+```
+
+- **Props Can Be Any Data Type:**
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  const info = {
+    name: "tamim",
+    age: 20,
+    country: "BD"
+  }
+
+  const crushList = ["tasnim", "liya", "bithe"]
+
+  const alertShow = () => {
+    alert("Hello props world")
+  }
+
+  return (
+    <div>
+      <ShowUserInfo info={info} single={true} hobby="Playing football" crushList={crushList} alertShow={alertShow}></ShowUserInfo>
+    </div>
+  );
+};
+
+export default App;
+
+const ShowUserInfo = ({ info, single, hobby, crushList, alertShow }) => {
+
+  const { name, age, country } = info;
+
+  return (
+    <div>
+      <h1>Name: {name}</h1>
+      <h1>Age: {age}</h1>
+      <h1>Country: {country}</h1>
+      <h1>alone: {single ? "I'm alone" : "i'm not alone"}</h1>
+      <h1>Hobby: {hobby}</h1>
+
+      <ul>
+        {crushList.map((girls, index) =>
+          <li key={index}>{girls}</li>
+        )}
+      </ul >
+
+      <div>
+        <button className='btn' onClick={alertShow}>click</button>
+      </div>
+    </div>
+  )
+}
+```
+
+- **Children Prop (props.children):**
+
+Special prop called children lets you pass JSX between opening and closing tags.
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  return (
+    <Card>
+      <h2>This is inside the Card component</h2>
+      <p>Reusable component with children props</p>
+    </Card>
+  );
+};
+
+export default App;
+
+function Card({ children }) {
+  return <div className="card">{children}</div>;
+}
+```
+
+### Passing Data Using Callback Functions:
+Props can only pass data from parent to child. But sometimes, the child component needs to send data back to the parent. In such cases, A callback function a callback function helps us to passing data from Child to Parent in React.
+
+```jsx
+import React, { useState } from 'react';
+
+const App = () => {
+  const [message, setMessage] = useState("");
+
+  function handleChildData(data) {
+    setMessage(data)
+  }
+
+  return (
+    <div>
+      <h1>Message form child: {message}</h1>
+      <Child handleChildData={handleChildData}></Child>
+    </div>
+  );
+};
+
+export default App;
+
+const Child = ({ handleChildData }) => {
+  return (
+    <div>
+      <input className='input' onChange={(e) => handleChildData(e.target.value)} type="text" />
+    </div>
+  )
+}
+```
+
+### Context API
+The Context API in React is a built-in feature that allows you to share data across multiple components without having to pass props manually at every level. It helps avoid “prop drilling” by creating a global context that any component can access directly.
+
+**How to create context API:**
+
+step 1: Create Context
+
+```jsx
+// src > MyContext.jsx
+
+import React from 'react';
+
+const MyContext = React.createContext();
+
+export default MyContext;
+```
+
+step 2: Provide Context Value 
+
+```jsx
+// src > main.jsx
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+import MyContext from './MyContext.jsx'
+
+
+const user = { name: "Tamim", age: 20 };
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <MyContext.Provider value={user}>
+      <App />
+    </MyContext.Provider>
+  </StrictMode>,
+)   
+```
+
+step 3: use context value using useContext():
+
+```jsx
+import React, { useContext } from 'react';
+import MyContext from './MyContext';
+
+const App = () => {
+  const user = useContext(MyContext);
+  const { name, age } = user;
+  return (
+    <div>
+      <h1>Hello, my name is: {name}</h1>
+      <p>I am {age} years old</p>
+    </div>
+  );
+};
+
+export default App;
+```
+
+### what is the difference between props, callback function and context api
+
+props: parent --> child
+callback function: child --> parent
+context api: Global (anywhere in tree)
+
+---
