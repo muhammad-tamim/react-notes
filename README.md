@@ -4,7 +4,7 @@
 
 
 - [Introduction](#introduction)
-    - [the story of react:](#the-story-of-react)
+    - [The story of react:](#the-story-of-react)
     - [what is components:](#what-is-components)
     - [what is virtual DOM and How virtual dom work:](#what-is-virtual-dom-and-how-virtual-dom-work)
     - [library vs framework](#library-vs-framework)
@@ -21,21 +21,19 @@
 
 React is a component-based JavaScript frontend library developed by Facebook for building dynamic and interactive user interfaces, especially for single-page applications. It allows developers to create reusable UI components with efficiently update the DOM using a virtual DOM.
 
-### the story of react:
+### The story of react:
 
 Back in the early 2010s, Facebook engineers were in trouble. Their web applications, especially the news feed and the ads system, needed frequent updates. Every little change meant updating the real DOM directly — and that was slow, clunky, and full of bugs. The UI became harder to manage, and performance dropped.
 
 In 2011, one Facebook engineer, Jordan Walke, decided to experiment. He built a prototype called FaxJS. The idea was bold: instead of updating the DOM directly, create a Virtual DOM — a lightweight copy of the actual DOM. Whenever something changed, compare the new Virtual DOM with the old one, and then update only the parts that actually changed in the real DOM. The results were stunning. Suddenly, apps ran smoother and faster.
 
-By 2012, this new approach was powering Facebook Ads, and later, Instagram. The success inside Facebook was undeniable.
+By 2012, this new approach was powering Facebook news feeds and Ads, and later, Instagram. The success inside Facebook was undeniable.
 
 Then came 2013. At JSConf US, Facebook decided to release this tool to the world. At first, developers didn’t know what to make of it. JSX — writing HTML inside JavaScript — looked strange. Some argued it broke the rules of traditional MVC (is a design pattern that separates an application into three parts: model, view, controller) patterns. A few even called it “the worst idea ever.”
 
-But React had a secret weapon: it worked.
-
 By 2014, people started noticing that React apps were faster, more predictable, and easier to maintain. The component-based architecture encouraged reuse, and teams could build complex interfaces without drowning in spaghetti code.
 
-Then came 2015, a breakthrough year. Big companies like Netflix adopted React. The state management library Redux was released, solving complex data flow issues. React Native made it possible to use the same principles to build mobile apps for iOS and Android. Even developer tools like the React DevTools browser extension were launched, making debugging easier. React was no longer just a Facebook experiment — it was becoming the industry standard.
+Then came 2015, a breakthrough year. Big companies like Netflix, airBnb adopted React. The state management library Redux was released, solving complex data flow issues. React Native made it possible to use the same principles to build mobile apps for iOS and Android. Even developer tools like the React DevTools browser extension were launched, making debugging easier. React was no longer just a Facebook experiment — it was becoming the industry standard.
 
 Over the following years, React kept evolving. Updates brought new features, performance boosts, and better developer experience. One of the biggest shifts came with Hooks (like useState, useEffect, and useContext). With Hooks, developers no longer needed class components for state and lifecycle management. Functional components became powerful and simple, and writing React apps became cleaner than ever.
 
@@ -51,39 +49,23 @@ The Virtual DOM is a lightweight, in-memory copy of the real DOM.
 
 ![image](./images/virtual-dom.png)
 
-**How virtual dom work**
 Here, we have a component that has a `<div>` and inside the `<div>` two elements:
 - First, React creates a Virtual DOM for this component, based on the actual DOM.
 - Then, when we change something—like adding a new `<h3>` element—React creates a new Virtual DOM for the updated component.
 - Next, React compares the newly created Virtual DOM with the previous Virtual DOM. This process is called diffing.
-- After comparing, React updates only the parts of the real DOM that changed in the actual DOM. This process is called reconciliation.
-
-
-
-
+- After comparing, React updates only the parts of the real DOM that changed. This process is called reconciliation.
 
 
 
 ### library vs framework
 
-- library: A library is a collection of pre-written code that developers can call whenever they need it. You are in control of the flow, and you decide when and how to use the library.
-- framework: A framework is a complete structure for building applications. It dictates the flow of your application and provides predefined ways to do things. You must follow the framework’s rules.
-  
 
-- library: yo cal the library, means you decide when and how to use it.
-- framework: the framework cal you, means it decide when and how to use it.
-
-
-
-- library: more flexible, you can combine with others tolls
-- framework: less flexible, you must follow its rules and conventions
-
-
-
-- library: focus on specific task
-- framework: provides a full solution for building entire apps
-
-
+| library                                                                                                                                                  | framework                                                                                                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| A library is a collection of pre-written code that you can pick and use whenever you need. You decide when to call it and how to use it in your program. | A framework is a pre-defined structure that you must follow to build your application. It decides when your code runs and how to use. |
+| you cal the library, means you decide when and how to use it.                                                                                            | the framework cal you, means it decide when and how to use it.                                                                        |
+| more flexible, you can combine with others tolls                                                                                                         | less flexible, you must follow its rules and conventions                                                                              |
+| focus on specific task                                                                                                                                   | provides a full solution for building entire apps                                                                                     |
 
 ### react vs next vs vue
 
@@ -150,6 +132,7 @@ npm run dev
 
 ![image not found](./images/react-page.png)
 
+---
 
 # jsx
 
