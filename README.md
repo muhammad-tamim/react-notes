@@ -134,27 +134,13 @@ npm run dev
 
 ---
 
+
 # jsx
 
-JSX stands for JavaScript XML. JSX allows you to HTML directly inside JavaScript, enabling you to create UI components more efficiently.
+JSX stands for JavaScript XML. JSX allows you to write HTML directly inside JavaScript, enabling you to create UI components more efficiently.
 
 ![image](./images/jsx.png)
 
-
-**Without JSX:**
-
-```js
-const element = React.createElement("h1", null, "Hello, React!");
-```
-
-**With jSX**
-
-```jsx
-const element = <h1>Hello, React!</h1>;
-```
-
-note: JSX is just syntactic sugar for React.createElement.
-  - Syntactic sugar is a programming term that means a special syntax is provided to make code easier to read or write, but it doesn’t add new functionality.It’s just “sweeter” (more human-friendly) syntax for something you could already do in a more verbose way.
 
 ### How JSX Works:
 
@@ -162,10 +148,8 @@ note: JSX is just syntactic sugar for React.createElement.
 const element = <h1 className="title">Hello</h1>;
 ```
 
-Behind the scenes, Babel (a compiler that convert jsx to raw js) converts this into:
+Behind the scenes, Babel (a compiler that converts JSX into JavaScript) transforms this JSX into a React.createElement:
 
-- 1st babel convert it into, react.createElement
-  
 ```jsx
 const element = React.createElement(
   "h1",
@@ -174,7 +158,7 @@ const element = React.createElement(
 );
 ```
 
-- then a plain js object: 
+this React.createElement returns a plain JavaScript object of the translated jsx:
 
 ```js
 {
@@ -186,76 +170,145 @@ const element = React.createElement(
 }
 ```
 
-React then uses this object to update the Virtual DOM.
+React uses this Virtual DOM object, compares it with the previous Virtual DOM, determines the differences, and updates only the parts of the real DOM that have changed.
 
 ### JSX rules: 
 
-- You can embed JavaScript expressions inside { }: 
+- You have include JavaScript expressions using { }: 
 
 ```jsx
-const name = "Tamim";
-const element = <h1>Hello, {name}!</h1>;
+import React from 'react';
+
+const App = () => {
+  const name = "Tamim";
+  return (
+    <div>
+      <h1>hello, i'm {name}.</h1>
+    </div>
+  );
+};
+
+export default App;
 ```
 
-- JSX attributes are written like HTML but with camelCase (class = className, onclick = onClick)
+- JSX attributes are written camelCase (class = className, onclick = onClick)
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  const name = "Tamim";
+  const handleClick = () => {
+    console.log("Hello world")
+  }
+  return (
+    <div>
+      <h1 className='text-2xl font-black text-red-100'>hello, i'm {name}.</h1>
+      <button onClick={handleClick()}>click</button>
+    </div>
+  );
+};
+
+export default App; 
+```
+
+- css styles are written as objects.
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  const stylesObject = {
+    color: "blue",
+    fontSize: "20px"
+  }
+
+  return (
+    <div>
+      <h1 style={{ color: "blue", fontSize: "20px" }}>Hello, i'm Tamim.</h1>
+      <h1 style={stylesObject}>Hello, i'm Tamim.</h1>
+      <h1 className='stylesComeFormCSSFile'>Hello, i'm Tamim</h1>
+    </div>
+  );
+};
+
+export default App;
+```
 
 - JSX Must Return a Single Parent:
 
-Error: 
+Wrong: 
 
 ```jsx
-return (
-  <h1>Hello</h1>
-  <p>World</p>
-);
+import React from 'react';
+
+const App = () => {
+
+  return (
+    <h1>Hello</h1>
+    <p>World</p>
+  );
+};
+
+export default App;
 ``` 
 
 right: 
 
 ```jsx
-return (
-  <div>
-    <h1>Hello</h1>
-    <p>World</p>
-  </div>
-);
+import React from 'react';
 
+const App = () => {
+
+  return (
+    <div>
+      <h1>Hello</h1>
+      <p>World</p>
+    </div>
+  );
+};
+
+export default App;
 ```
 
 or use fragment:
 
 ```jsx
-return (
-  <>
-    <h1>Hello</h1>
-    <p>World</p>
-  </>
-);
+import React from 'react';
+
+const App = () => {
+
+  return (
+    <>
+      <h1>Hello</h1>
+      <p>World</p>
+    </>
+  );
+};
+
+export default App;
 ```
 
-- Conditional Rendering in JSX:
+- When rendering lists, each item must have a unique key: 
 
 ```jsx
-const isLoggedIn = true;
+import React from 'react';
 
-return (
-  <div>
-    {isLoggedIn ? <h1>Welcome back!</h1> : <h1>Please log in</h1>}
-  </div>
-);
+const App = () => {
+
+  const items = ["Apple", "Banana", "Mango"];
+
+  return (
+    <ul>
+      {items.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </ul>
+  );
+}
+
+export default App;
 ```
 
-- Lists in JSX: 
-
-```jsx
-const items = ["Apple", "Banana", "Mango"];
-
-return (
-  <ul>
-    {items.map((item, index) => (
-      <li key={index}>{item}</li>
-    ))}
-  </ul>
-);
-```
+---
 
