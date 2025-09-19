@@ -10,7 +10,9 @@
     - [library vs framework](#library-vs-framework)
     - [react vs next vs vue](#react-vs-next-vs-vue)
     - [Create React App with Vite:](#create-react-app-with-vite)
-    - [what is jsx and how jsx works](#what-is-jsx-and-how-jsx-works)
+- [jsx](#jsx)
+    - [How JSX Works:](#how-jsx-works)
+    - [JSX rules:](#jsx-rules)
 
 
 
@@ -149,32 +151,128 @@ npm run dev
 ![image not found](./images/react-page.png)
 
 
-### what is jsx and how jsx works
+# jsx
 
-JSX stands for JavaScript XML, and it is a special syntax used in React to simplify building user interfaces. JSX allows you to write HTML-like code directly inside JavaScript, enabling you to create UI components more efficiently.
+JSX stands for JavaScript XML. JSX allows you to HTML directly inside JavaScript, enabling you to create UI components more efficiently.
+
 ![image](./images/jsx.png)
 
-Example:
+
+**Without JSX:**
+
+```js
+const element = React.createElement("h1", null, "Hello, React!");
+```
+
+**With jSX**
 
 ```jsx
-// app.jsx
-import React from 'react';
-
-const App = () => {
-  return (
-    <div>
-      <h1>Hello World</h1>
-    </div>
-  );
-};
-
-export default App;
+const element = <h1>Hello, React!</h1>;
 ```
-`<h1>Hello, world!</h1>` is a JSX element, similar to HTML, that represents a heading tag. JSX is converted into JavaScript behind the scenes, where React uses React.createElement() to turn the JSX code into actual HTML elements that the browser can understand.
 
+note: JSX is just syntactic sugar for React.createElement.
+  - Syntactic sugar is a programming term that means a special syntax is provided to make code easier to read or write, but it doesn’t add new functionality.It’s just “sweeter” (more human-friendly) syntax for something you could already do in a more verbose way.
 
-When React processes this JSX code, it converts it into JavaScript using Babel. This JavaScript code then creates real HTML elements in the browser’s DOM . which is how your web page gets displayed.
+### How JSX Works:
 
-![imagae](./images/jsx-to-js.png)
+```jsx
+const element = <h1 className="title">Hello</h1>;
+```
 
-**Note:** Babel acts as a translator for your React code. It takes modern JavaScript (like JSX) that browsers don't understand directly. Finally, it converts it into older, compatible JavaScript so your application runs everywhere.
+Behind the scenes, Babel (a compiler that convert jsx to raw js) converts this into:
+
+- 1st babel convert it into, react.createElement
+  
+```jsx
+const element = React.createElement(
+  "h1",
+  { className: "title" },
+  "Hello"
+);
+```
+
+- then a plain js object: 
+
+```js
+{
+  type: "h1",
+  props: {
+    className: "title",
+    children: "Hello"
+  }
+}
+```
+
+React then uses this object to update the Virtual DOM.
+
+### JSX rules: 
+
+- You can embed JavaScript expressions inside { }: 
+
+```jsx
+const name = "Tamim";
+const element = <h1>Hello, {name}!</h1>;
+```
+
+- JSX attributes are written like HTML but with camelCase (class = className, onclick = onClick)
+
+- JSX Must Return a Single Parent:
+
+Error: 
+
+```jsx
+return (
+  <h1>Hello</h1>
+  <p>World</p>
+);
+``` 
+
+right: 
+
+```jsx
+return (
+  <div>
+    <h1>Hello</h1>
+    <p>World</p>
+  </div>
+);
+
+```
+
+or use fragment:
+
+```jsx
+return (
+  <>
+    <h1>Hello</h1>
+    <p>World</p>
+  </>
+);
+```
+
+- Conditional Rendering in JSX:
+
+```jsx
+const isLoggedIn = true;
+
+return (
+  <div>
+    {isLoggedIn ? <h1>Welcome back!</h1> : <h1>Please log in</h1>}
+  </div>
+);
+```
+
+- Lists in JSX: 
+
+```jsx
+const items = ["Apple", "Banana", "Mango"];
+
+return (
+  <ul>
+    {items.map((item, index) => (
+      <li key={index}>{item}</li>
+    ))}
+  </ul>
+);
+```
+
