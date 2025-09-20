@@ -19,6 +19,7 @@
     - [Context API](#context-api)
     - [what is the difference between props, callback function and context api](#what-is-the-difference-between-props-callback-function-and-context-api)
 - [Event Handling in react](#event-handling-in-react)
+- [useState()](#usestate)
 
 
 
@@ -702,5 +703,64 @@ function App() {
 }
 
 export default App
+```
+---
+
+# useState()
+useState is a React Hook that lets you add state variables to functional components. State is data that can change over time (like counters, inputs, toggles, etc.). When state changes → React re-renders the component to show the new UI.
+
+syntax: 
+```const [stateVariable, setStateFunction] = useState(initialValue);```
+
+```jsx
+import { useState } from "react";
+
+function App() {
+  const [count, setCount] = useState(0); // 0 = initial value
+
+  return (
+    <>
+      <h1>Count: {count}</h1>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+    </>
+  );
+}
+```
+- Functional Updates
+
+When the new state depends on the previous state, you have to use functional updates:
+
+```jsx
+import { useState } from "react";
+import './index.css'
+import './App.css'
+
+function App() {
+  const [count, setCount] = useState(0);
+
+  const handleNormalUpdate = () => {
+    setCount(count + 1);
+    setCount(count + 1);
+    setCount(count + 1);
+    // Result: count increases only by 1
+  };
+
+  const handleFunctionalUpdate = () => {
+    setCount(prev => prev + 1);
+    setCount(prev => prev + 1);
+    setCount(prev => prev + 1);
+    // Result: count increases by 3, because React gives you the most recent state through prev.
+  };
+
+  return (
+    <>
+      <h1>Count: {count}</h1>
+      <button onClick={handleNormalUpdate}>Increase1</button>
+      <button onClick={handleFunctionalUpdate}>Increase2</button>
+    </>
+  );
+}
+
+export default App;
 ```
 ---
