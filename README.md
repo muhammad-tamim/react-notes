@@ -18,6 +18,7 @@
     - [Passing Data Using Callback Functions:](#passing-data-using-callback-functions)
     - [Context API](#context-api)
     - [what is the difference between props, callback function and context api](#what-is-the-difference-between-props-callback-function-and-context-api)
+- [Event Handling in react](#event-handling-in-react)
 
 
 
@@ -607,4 +608,99 @@ props: parent --> child
 callback function: child --> parent
 context api: Global (anywhere in tree)
 
+---
+
+# Event Handling in react
+
+- Passing Functions and Arguments as Event Handlers
+
+```jsx
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+
+function App() {
+  const handleClick1 = () => {
+    alert("I am clicked1");
+  }
+
+  const handleClick2 = () => {
+    alert("I am clicked2");
+  }
+
+  const handleClick3 = (num) => {
+    const newNumber = num + 5;
+    alert(newNumber)
+  }
+  return (
+    <>
+      <button onClick={handleClick1}>Click Me 1</button>
+      {/* run  only when the button is actually clicked. */}
+
+      <button onClick={handleClick2()}>Click Me 2</button>
+      {/* hers, we calling the function immediately thats why 
+      handleClick2() runs as soon as the component renders. so 
+      this button won’t do anything when clicked. */}
+
+      <button onClick={() => handleClick3(5)}>Click Me 3</button>
+      {/* Here, we are wrapping the function call inside an arrow function.
+      This means the arrow function itself is passed to onClick.
+      The inner handleClick3(5) will only run when the button is actually clicked.
+      That’s why it doesn’t run on page load, only on click. */}
+    </>
+  )
+}
+
+export default App  
+```
+
+- Accessing the Event Object
+
+```jsx
+import { useState } from 'react'
+import './App.css'
+
+function App() {
+  const [value, setValue] = useState("")
+
+  const handleInput = (event) => {
+    setValue(event.target.value)
+  }
+
+  return (
+    <>
+      <h1>Value form input: {value}</h1>
+      <input type="text" onChange={handleInput} />
+    </>
+  )
+}
+
+export default App
+```
+
+- Preventing Default Behavior
+
+```jsx
+import './App.css'
+
+function App() {
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    alert("Form submitted without refresh!");
+  }
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <input type="text" />
+        <button type="submit">Submit</button>
+      </form>
+    </>
+  )
+}
+
+export default App
+```
 ---
