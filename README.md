@@ -23,6 +23,7 @@
 - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
     - [using useEffect()](#using-useeffect)
+- [react component lifecycle](#react-component-lifecycle)
 
 
 
@@ -946,3 +947,15 @@ function App() {
 
 export default App;
 ```
+
+# react component lifecycle
+The React component lifecycle is the sequence of phases a component goes through from mounting to updating to unmounting.
+
+Lifecycle Phases:
+- Mounting → Component is being created and inserted into the DOM
+- Updating → Component is being re-rendered due to state/props changes
+- Unmounting → Component is being removed from the DOM
+
+In functional components, the useEffect hook can follow all these lifecycle phases.
+
+---
