@@ -20,6 +20,9 @@
     - [what is the difference between props, callback function and context api](#what-is-the-difference-between-props-callback-function-and-context-api)
 - [Event Handling in react](#event-handling-in-react)
 - [useState()](#usestate)
+- [data loading in react](#data-loading-in-react)
+    - [using use() with suspense:](#using-use-with-suspense)
+    - [using useEffect()](#using-useeffect)
 
 
 
@@ -764,3 +767,182 @@ function App() {
 export default App;
 ```
 ---
+
+
+# data loading in react
+### using use() with suspense:
+- suspense = Suspense is a React component that manages the loading state of asynchronous operations by showing a fallback UI (like a loader) until the data or resource is ready.
+- use() = use() is a React 19 hook that unwraps promises or async values inside components, it pausing rendering until the data is resolved and letting Suspense display a fallback during data loading.
+
+```jsx
+// App.jsx
+import { Suspense } from "react";
+import './index.css'
+import './App.css'
+import Users from "./Users";
+
+const fetchUsers = fetch("https://jsonplaceholder.typicode.com/users")
+  .then(res => res.json())
+
+function App() {
+  return (
+    <>
+      <Suspense fallback={<h3>Data loading.......................</h3>}>
+        <Users fetchUsers={fetchUsers}></Users>
+      </Suspense>
+    </>
+  );
+}
+
+export default App;
+```
+
+```jsx
+// Users.jsx
+import React, { use } from 'react';
+
+const Users = ({ fetchUsers }) => {
+    const users = use(fetchUsers)
+    console.log(users)
+    return (
+        <div>
+            <h3>Users: {users.length}</h3>
+        </div>
+    );
+};
+
+export default Users;
+```
+
+```jsx
+```
+
+Note: For the code below, we’re calling use(fetchUsers) before React reaches `<Suspense>`. This means the use() hook resolves the promise immediately, without giving Suspense a chance to show its fallback. That’s why you always call use() inside a child component wrapped by `<Suspense>`, not in the same component where `<Suspense>` is defined.
+
+```jsx
+// App.jsx
+import { Suspense, use } from "react";
+import './index.css'
+import './App.css'
+import Users from "./Users";
+
+const fetchUsers = fetch("https://jsonplaceholder.typicode.com/users")
+  .then(res => res.json())
+
+function App() {
+  const users = use(fetchUsers)
+  return (
+    <>
+      <Suspense fallback={<h3>Data loading.......................</h3>}>
+        {/* <Users fetchUsers={fetchUsers}></Users> */}
+        <h3>Users: {users.length}</h3> 
+      </Suspense>
+    </>
+  );
+}
+
+export default App;
+```
+
+**with async/await**:
+
+```jsx
+// App.jsx
+import { Suspense } from "react";
+import './index.css'
+import './App.css'
+import Users from "./Users";
+
+
+const fetchUsers = async () => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/users")
+  return res.json(); // return the promise
+}
+
+function App() {
+  const users = fetchUsers()
+  return (
+    <>
+      <Suspense fallback={<h3>Data loading.......................</h3>}>
+        <Users fetchUsers={users}></Users>
+      </Suspense>
+    </>
+  );
+}
+
+export default App;
+```
+
+```jsx
+// Users.jsx
+import React, { use } from 'react';
+import User from './User';
+
+const Users = ({ fetchUsers }) => {
+    const users = use(fetchUsers)
+    console.log(users)
+    return (
+        <div>
+            {
+                users.map((user, index) => <User key={index} user={user}></User>)
+            }
+        </div>
+    );
+};
+
+export default Users;
+```
+
+```jsx
+// User.jsx
+import React from 'react';
+
+const User = ({ user }) => {
+    return (
+        <div>
+            <h1>Name: {user.name}</h1>
+        </div>
+    );
+};
+
+export default User;
+```
+
+
+### using useEffect()
+
+useEffect is a Traditional way to Data Loading in react.
+
+```jsx
+// App.jsx
+import { useEffect, useState } from "react";
+import './index.css'
+import './App.css'
+
+
+function App() {
+
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then(res => res.json())
+      .then(data => setData(data))
+      .catch(err => setError(err))
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) return <div>loading...............</div>
+  if (error) return <div>{error.message}</div>
+
+  return (
+    <>
+      <h3>Users: {data.length}</h3>
+    </>
+  );
+}
+
+export default App;
+```
