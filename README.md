@@ -24,6 +24,7 @@
     - [using use() with suspense:](#using-use-with-suspense)
     - [using useEffect()](#using-useeffect)
 - [react component lifecycle](#react-component-lifecycle)
+- [useEffect](#useeffect)
 
 
 
@@ -953,9 +954,158 @@ The React component lifecycle is the sequence of phases a component goes through
 
 Lifecycle Phases:
 - Mounting → Component is being created and inserted into the DOM
-- Updating → Component is being re-rendered due to state/props changes
+- Updating → Component is being re-rendered due to state/props/dependencies changes
 - Unmounting → Component is being removed from the DOM
 
 In functional components, the useEffect hook can follow all these lifecycle phases.
+
+---
+
+# useEffect
+useEffect is a React Hook that allows you to perform side effects in functional components.
+
+Examples of Side Effects:
+- Data fetching (API calls)
+- Subscriptions
+- DOM manipulation
+- Timers (setTimeout, setInterval)
+- Logging or analytics
+
+syntax:
+
+```jsx
+useEffect(() => {
+
+  return () => {
+  };
+}, [dependencies]);
+```
+- Effect function: () => { ... } → the code that runs as a side effect.
+- Cleanup function: return () => { ... } → runs when the component unmounts or before the effect runs again.
+- Dependencies array: [dep1, dep2] → when dependencies change, the effect re-runs.
+
+**How useEffect Relates to Lifecycle Phases:**
+
+In older React versions, class components used lifecycle methods like:
+- componentDidMount → runs after the component is mounted
+- componentDidUpdate → runs after the component updates
+- componentWillUnmount → runs before the component unmounts
+
+In functional components, the lifecycle is handled using the useEffect Hook. It covers the three main phases of a component: Mounting → Updating → Unmounting.
+
+**lifecycle phases with useEffect():**
+
+- Mounting:
+
+useEffect with empty dependency array works only when the component rendered first time after mounted
+
+```jsx
+// App.jsx
+import { useEffect, useState } from "react";
+import './index.css'
+import './App.css'
+
+function App() {
+  const [data, setData] = useState("");
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then(res => res.json())
+      .then(data => setData(data))
+  }, [])
+  return (
+    <>
+      <h1>Data: {data.length}</h1>
+    </>
+  );
+}
+
+export default App;
+```
+
+- Updating:
+useEffect with dependencies array re-rendered the component whenever the dependencies changed.
+
+```jsx
+// App.jsx
+import { useEffect, useState } from "react";
+import './index.css'
+import './App.css'
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(1);
+
+  useEffect(() => {
+    fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+      .then(res => res.json())
+      .then(data => setUser(data))
+  }, [userId])
+  return (
+    <>
+      <h1>User Profile</h1>
+      <div>
+        <h1>User Info:</h1>
+        {
+          user ?
+            // <>
+            //   <p>Name: {user?.name}</p>
+            //   <p>Email: {user?.email}</p>
+            // </>
+            (
+              <div>
+                <p>Name: {user?.name}</p>
+                <p>Email: {user?.email}</p>
+              </div>
+            )
+            : (
+              <p>Loading...........</p>
+            )
+        }
+        <hr />
+      </div>
+      <div>
+        <button onClick={() => setUserId(userId + 1)}>Load Next User</button>
+      </div>
+    </>
+  );
+}
+
+export default App;
+```
+
+- Unmounting:
+useEffect with cleanup function only works when the component is unmounted.
+
+```jsx
+// App.jsx
+import { useEffect, useState } from "react";
+import './index.css'
+import './App.css'
+
+function App() {
+  const [time, setTime] = useState(new Date().toLocaleTimeString())
+
+  useEffect(() => {
+
+    const timer = setInterval(() => {
+      setTime(new Date().toLocaleTimeString())
+    }, 1000);
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
+  return (
+    <>
+      <p>Time: {time}</p>
+    </>
+  );
+}
+
+export default App;
+```
+
+Note: Without a cleanup function, the code works at first, but over time it can cause memory leaks, wasted CPU, and make the website slow or unstable. This happens because the setInterval runs forever, even after the component is removed from the DOM. Using a cleanup function ensures that when the component is unmounted, the interval is stopped.
 
 ---
