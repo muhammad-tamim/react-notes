@@ -848,7 +848,68 @@ function App() {
   );
 }
 ```
-- Functional Updates
+
+**How useState works behind the scenes:**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- react CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- babel.js CDN -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- a root div where, react element will render -->
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const Counter = () => {
+
+            const reactUseState = React.useState(0)
+            console.log(reactUseState)
+
+            console.log(reactUseState[0])
+            console.log(reactUseState[1])
+
+            const [counter, setCounter] = React.useState(100);
+            console.log(counter)
+            console.log(setCounter)
+
+            const handleAdd = () => {
+                setCounter(counter + 1)
+            }
+
+            return (
+                <div>
+                    <button onClick={handleAdd}>Click</button>
+                    <p>Counter: <span id="counter">{counter}</span></p>
+                </div>
+            )
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(
+            <Counter></Counter>
+        );
+    </script>
+</body>
+
+</html>
+```
+![](./images/useState-behindTheScenes.png)
+
+**Functional Updates:**
 
 When the new state depends on the previous state, you have to use functional updates:
 
