@@ -10,6 +10,7 @@
     - [library vs framework](#library-vs-framework)
     - [react vs next vs vue](#react-vs-next-vs-vue)
     - [Create React App with Vite:](#create-react-app-with-vite)
+    - [Inside the Vite + react:](#inside-the-vite--react)
 - [jsx](#jsx)
     - [How JSX Works behind the scenes:](#how-jsx-works-behind-the-scenes)
     - [JSX rules:](#jsx-rules)
@@ -146,6 +147,59 @@ npm run dev
 
 ---
 
+### Inside the Vite + react: 
+
+- index.html: Root HTML file for the react app.
+  - `<div id="root"></div>` → This is where React mounts the entire application.
+  - `<script type="module" src="/src/main.jsx"></script>` → Loads main.jsx, the starting point of your React app.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+``` 
+
+- main.jsx: Entry point for the React app. it select the root element form the index.html and render all the component there by using react DOM.
+  - `<StrictMode>` → helps catch potential problems in development.
+
+```jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+```
+
+- App.jsx: A React component, You can have thousands of components like this, but they all must be imported and connected in a component tree.
+```jsx
+import './App.css'
+
+function App() {
+
+  return (
+    <>
+      <h1>I am h1, created from React but in JSX</h1>
+    </>
+  )
+}
+
+export default App
+```
 
 # jsx
 
