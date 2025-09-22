@@ -11,7 +11,7 @@
     - [react vs next vs vue](#react-vs-next-vs-vue)
     - [Create React App with Vite:](#create-react-app-with-vite)
 - [jsx](#jsx)
-    - [How JSX Works:](#how-jsx-works)
+    - [How JSX Works behind the scenes:](#how-jsx-works-behind-the-scenes)
     - [JSX rules:](#jsx-rules)
 - [Props, callback function, context api](#props-callback-function-context-api)
     - [props](#props)
@@ -154,35 +154,152 @@ JSX stands for JavaScript XML. JSX allows you to write HTML directly inside Java
 ![image](./images/jsx.png)
 
 
-### How JSX Works:
+### How JSX Works behind the scenes:
+
+When we use React, it attaches two global objects to the browser:
+
+1. React → The core React library.
+   - Contains APIs like createElement, useState, useEffect, etc.
+   - These functions don’t directly render to the browser; instead, they create and manage React elements (plain JavaScript objects that describe the UI).
+
+2. ReactDOM → The library that connects React with the browser DOM.
+   - Provides methods like createRoot and render.
+   - It takes React elements (from React) and actually updates the real DOM on the screen.
+
 
 ```jsx
-const element = <h1 className="title">Hello</h1>;
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- react CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+
+    <script>
+        console.log(React)
+        console.log(ReactDOM)
+    </script>
+</body>
+
+</html>
 ```
 
-Behind the scenes, Babel (a compiler that converts JSX into JavaScript) transforms this JSX into a React.createElement:
+![image](./images/CDN-react.png)
+![image](./images/cdn-ReactDom.png)
+
+Note: This is just for demo purposes. In modern React projects, we don’t write code like this. Instead, we use JSX along with tools like Vite, CRA, or Next.js, which install all React packages behind the scenes.
+
+
+**Creating an Element with React (Without JSX):**
+In React’s early days (or when using React via a CDN), we can manually create elements like this:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>React Example</title>
+  <!-- React CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+</head>
+
+<body>
+  <!-- Root container where React will render -->
+  <div id="root"></div>
+
+  <script>
+    // Create a React element: (type, props, children)
+    const myElement = React.createElement("h1", null, "I am h1, created from React");
+
+    console.log(myElement); // logs a plain object describing the UI
+
+    // Render it to the DOM
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(myElement);
+  </script>
+</body>
+
+</html>
+```
+What myElement looks like in the console:
+
+![image](./images/react-createElement.png)
+
+This shows that a React element is just a JavaScript object.
+
+**Creating an Element with JSX and Babel:**
+
+In real projects (with Vite, CRA, Next.js, etc.), we don’t usually write React.createElement. Instead, we use JSX, which looks like this:
 
 ```jsx
-const element = React.createElement(
-  "h1",
-  { className: "title" },
-  "Hello"
-);
+import './App.css'
+
+function App() {
+
+  return (
+    <>
+      <h1>I am h1, created from React but in JSX</h1>
+    </>
+  )
+}
+
+export default App
 ```
+However, browsers cannot understand JSX directly. That’s where Babel comes in. behind the scenes Babel compiles it into React.createElement:
 
-this React.createElement returns a plain JavaScript object of the translated jsx:
-
-```js
-{
-  type: "h1",
-  props: {
-    className: "title",
-    children: "Hello"
-  }
+```jsx
+function App() {
+  return React.createElement("h1", null, "I am h1, created from React but in JSX");
 }
 ```
+Which produces the same object as before:
 
-React uses this Virtual DOM object, compares it with the previous Virtual DOM, determines the differences, and updates only the parts of the real DOM that have changed.
+![image](./images/react-createElement.png)
+
+Then, ReactDOM takes that object and updates the real DOM.
+
+For Better understand how babel works, below we directly used babel.js: 
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- react CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- babel.js CDN -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- a root div where, react element will render -->
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // const myElement = React.createElement("h1", null, "I am jsx h1, created from js using Babel.js");
+        const myElement = <h1>I am jsx h1, created from js using Babel.js</h1>
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(myElement);
+    </script>
+</body>
+
+</html>
+```
 
 ### JSX rules: 
 
