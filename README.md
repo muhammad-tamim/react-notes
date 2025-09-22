@@ -24,6 +24,7 @@
 - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
     - [using useEffect()](#using-useeffect)
+    - [Infinite api call issue:](#infinite-api-call-issue)
 - [react component lifecycle](#react-component-lifecycle)
 - [useEffect](#useeffect)
 
@@ -1048,8 +1049,6 @@ const Users = ({ fetchUsers }) => {
 export default Users;
 ```
 
-```jsx
-```
 
 Note: For the code below, we’re calling use(fetchUsers) before React reaches `<Suspense>`. This means the use() hook resolves the promise immediately, without giving Suspense a chance to show its fallback. That’s why you always call use() inside a child component wrapped by `<Suspense>`, not in the same component where `<Suspense>` is defined.
 
@@ -1180,6 +1179,33 @@ function App() {
 
 export default App;
 ```
+
+### Infinite api call issue: 
+
+If we fetch data directly inside the component body, React will fetch the data on every render thats cause a infinite api call. To solve this problem, we must use useEffect() or use() hooks.
+
+```jsx
+import { useState } from 'react'
+import './App.css'
+
+function App() {
+  const [products, setProducts] = useState([]);
+
+  fetch("https://fakestoreapi.com/products")
+    .then(res => res.json())
+    .then(data => setProducts(data))
+
+  return (
+    <>
+      <h1>{products.length}</h1>
+    </>
+  )
+}
+
+export default App
+```
+
+to see the infinite request, go to the browser network tab
 
 # react component lifecycle
 The React component lifecycle is the sequence of phases a component goes through from mounting to updating to unmounting.
