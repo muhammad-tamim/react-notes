@@ -1010,8 +1010,8 @@ export default App;
 - use() = use() is a React 19 hook that unwraps promises or async values inside components, it pausing rendering until the data is resolved and letting Suspense display a fallback during data loading.
 
 ```jsx
-// App.jsx
 import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import './index.css'
 import './App.css'
 import Users from "./Users";
@@ -1022,9 +1022,12 @@ const fetchUsers = fetch("https://jsonplaceholder.typicode.com/users")
 function App() {
   return (
     <>
-      <Suspense fallback={<h3>Data loading.......................</h3>}>
-        <Users fetchUsers={fetchUsers}></Users>
-      </Suspense>
+      <ErrorBoundary fallback={<h1>Something went wrong</h1>}>
+        {/*npm i react-error-boundary */}
+        <Suspense fallback={<h3>Data loading.......................</h3>}>
+          <Users fetchUsers={fetchUsers}></Users>
+        </Suspense>
+      </ErrorBoundary>
     </>
   );
 }
@@ -1055,6 +1058,7 @@ Note: For the code below, we’re calling use(fetchUsers) before React reaches `
 ```jsx
 // App.jsx
 import { Suspense, use } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import './index.css'
 import './App.css'
 import Users from "./Users";
@@ -1066,10 +1070,12 @@ function App() {
   const users = use(fetchUsers)
   return (
     <>
+     <ErrorBoundary fallback={<h1>Something went wrong</h1>}>
       <Suspense fallback={<h3>Data loading.......................</h3>}>
         {/* <Users fetchUsers={fetchUsers}></Users> */}
         <h3>Users: {users.length}</h3> 
       </Suspense>
+      </ErrorBoundary>
     </>
   );
 }
@@ -1082,6 +1088,7 @@ export default App;
 ```jsx
 // App.jsx
 import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import './index.css'
 import './App.css'
 import Users from "./Users";
@@ -1096,9 +1103,11 @@ function App() {
   const users = fetchUsers()
   return (
     <>
+    <ErrorBoundary fallback={<h1>Something went wrong</h1>}>
       <Suspense fallback={<h3>Data loading.......................</h3>}>
         <Users fetchUsers={users}></Users>
       </Suspense>
+    </ErrorBoundary>
     </>
   );
 }
