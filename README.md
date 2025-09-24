@@ -14,6 +14,7 @@
 - [jsx](#jsx)
     - [How JSX Works behind the scenes:](#how-jsx-works-behind-the-scenes)
     - [JSX rules:](#jsx-rules)
+- [conditional rendering](#conditional-rendering)
 - [Props, callback function, context api](#props-callback-function-context-api)
     - [props](#props)
     - [Passing Data Using Callback Functions:](#passing-data-using-callback-functions)
@@ -547,6 +548,67 @@ export default App;
 ```
 
 ---
+
+# conditional rendering
+
+- using if-ele statement: 
+
+```jsx
+import React from 'react';
+
+const App = () => {
+
+  const isLoggedIn = true;
+
+  if (isLoggedIn) {
+    return <h1>Welcome, back, User!</h1>
+  }
+  else {
+    return <h1>Please login</h1>
+  }
+};
+
+export default App;
+``` 
+
+- using ternary operator: 
+
+```jsx
+import React from 'react';
+
+const App = () => {
+
+  const isLoggedIn = true;
+  return (
+    <div>
+      {isLoggedIn ? "Welcome, back, User!" : "Please login"}
+    </div>
+  )
+};
+
+export default App;
+```
+
+- using logical AND (&&) and OR (||)
+
+```jsx
+import React from 'react';
+
+const App = () => {
+
+  const isLoggedIn = true;
+  return (
+    <div>
+      {isLoggedIn && "Welcome, back, User!"}
+      {isLoggedIn || "Please Login"}
+    </div>
+  )
+};
+
+export default App;
+``` 
+---
+
 
 
 # Props, callback function, context api
