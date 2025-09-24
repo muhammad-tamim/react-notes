@@ -29,6 +29,7 @@
     - [Infinite api call issue:](#infinite-api-call-issue)
 - [react component lifecycle](#react-component-lifecycle)
 - [useEffect](#useeffect)
+- [Pure and InPure function](#pure-and-inpure-function)
 
 
 
@@ -1544,5 +1545,85 @@ export default App;
 ```
 
 Note: Without a cleanup function, the code works at first, but over time it can cause memory leaks, wasted CPU, and make the website slow or unstable. This happens because the setInterval runs forever, even after the component is removed from the DOM. Using a cleanup function ensures that when the component is unmounted, the interval is stopped.
+
+---
+
+# Pure and InPure function
+A pure function is a function that:
+- Always returns the same output for the same input.
+- Does not cause side effects (doesn’t modify variables outside its scope, doesn’t touch the DOM directly, doesn’t make API calls).
+
+```jsx
+import React from "react";
+import Sum from "./Sum";
+
+const App = () => {
+  return (
+    <div>
+      <Sum num1={10} num2={20}></Sum>
+    </div>
+  );
+}
+
+export default App;
+```
+
+```jsx
+import React from 'react';
+
+const Sum = ({ num1, num2 }) => {
+    return (
+        <div>
+            <h1>Summation is {num1 + num2}</h1>
+        </div>
+    );
+};
+
+export default Sum;
+```
+
+On the other hand, An impure function is a function that:
+
+- May return different outputs for the same input.
+- May cause side effects (modify variables outside its scope, modify DOM directly, make API calls etc)
+
+```jsx
+import React from "react";
+import Sum from "./Sum";
+
+const App = () => {
+  return (
+    <div>
+      <Sum num1={10} num2={20}></Sum>
+      <Sum num1={10} num2={20}></Sum>
+      <Sum num1={10} num2={20}></Sum>
+    </div>
+  );
+}
+
+export default App;
+```
+
+```jsx
+import React from 'react';
+
+let num = 0;
+
+const Sum = ({ num1, num2 }) => {
+    num += num1 + num2;
+    return (
+        <div>
+            <h1>Summation is {num}</h1>
+        </div>
+    );
+};
+
+export default Sum;
+```
+
+Output: 
+Summation is 60
+Summation is 120
+Summation is 180
 
 ---
