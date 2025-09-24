@@ -58,6 +58,58 @@ A component is basically a reusable, independent piece of UI. Components can be 
 
 ![](./images/components.jpg)
 
+here, Here is a Gallery component rendering three Profile components:
+
+```jsx
+import React from 'react';
+import Gallery from './Gallery';
+
+const App = () => {
+  return (
+    <div>
+      <Gallery></Gallery>
+    </div>
+  );
+};
+
+export default App;
+```
+
+```jsx
+import React from 'react';
+import Profile from './Profile';
+
+const Gallery = () => {
+    return (
+        <div>
+            <h1>Amazing scientists</h1>
+            <Profile></Profile>
+            <Profile></Profile>
+            <Profile></Profile>
+        </div>
+    );
+};
+
+export default Gallery;
+```
+
+```jsx
+import React from 'react';
+
+const Profile = () => {
+    return (
+        <div>
+            <img
+                src="https://i.imgur.com/MK3eW3As.jpg"
+                alt="Katherine Johnson"
+            />
+        </div>
+    );
+};
+
+export default Profile;
+```
+
 ### what is virtual DOM and How virtual dom work:
 The Virtual DOM is a lightweight, in-memory copy of the real DOM.
 
