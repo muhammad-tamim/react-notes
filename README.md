@@ -15,6 +15,7 @@
     - [How JSX Works behind the scenes:](#how-jsx-works-behind-the-scenes)
     - [JSX rules:](#jsx-rules)
 - [conditional rendering](#conditional-rendering)
+- [Rendering list in react](#rendering-list-in-react)
 - [Props, callback function, context api](#props-callback-function-context-api)
     - [props](#props)
     - [Passing Data Using Callback Functions:](#passing-data-using-callback-functions)
@@ -609,7 +610,62 @@ export default App;
 ``` 
 ---
 
+# Rendering list in react
 
+In React, rendering a list means showing each element of an array using JSX and the map() method.
+
+We cannot use other methods like forEach and loops like for loop, or for..of here, because React needs to return a new array, and none of them return a new array. That’s why we need to use map() for rendering lists in React.
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  const users = [
+    { id: 1, name: "Tamim", age: 21 },
+    { id: 2, name: "Sara", age: 19 },
+    { id: 3, name: "John", age: 25 }
+  ];
+
+  return (
+    <ul>
+      {users.map((user) => (
+        <li key={user.id}>
+          {user.name} ({user.age} years old)
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export default App;
+```
+
+Here, we also need unique keys for list rendering because the key prop helps React identify which items are changed, added, or removed. If we don’t use keys and change something in the array, React will re-render the whole list again and cannot track the elements properly.
+
+
+Also sometimes we use index as a key, but it’s not recommended. Even if you don’t see any error when using index as a key but React may get confused when we try operations like adding, removing, or updating items. Use index only when you are 100% sure the array will never change.
+
+```jsx
+import React from 'react';
+
+const App = () => {
+  const fruits = ["Apple", "Banana", "Mango"];
+
+  return (
+    <div>
+      <ul>
+        {fruits.map((fruit, index) => (
+          <li key={index}>{fruit}</li>
+        ))}
+      </ul>
+    </div>
+  );
+
+};
+
+export default App;
+```
+---
 
 # Props, callback function, context api
 
