@@ -838,7 +838,10 @@ const ShowUserInfo = ({ info, single, hobby, crushList, alertShow }) => {
 
 - **Children Prop (props.children):**
 
-Special prop called children lets you pass JSX between opening and closing tags.
+In React, children is a special prop that lets you pass content inside a component.
+
+
+example 1: 
 
 ```jsx
 import React from 'react';
@@ -857,6 +860,114 @@ export default App;
 function Card({ children }) {
   return <div className="card">{children}</div>;
 }
+```
+
+example 2: 
+
+```jsx
+import React from "react";
+import AlertButton from "./AlertButton";
+
+const App = () => {
+  return (
+    <div>
+      <AlertButton message="playing">
+        <p>Click me to playing</p>
+      </AlertButton>
+      <AlertButton message="dancing">
+        <p>Click me to dancing</p>
+      </AlertButton>
+    </div>
+  );
+}
+
+export default App;
+```
+
+```jsx
+import React from 'react';
+
+const AlertButton = ({ message, children }) => {
+    return (
+        <button onClick={() => alert(message)}>
+            {children}
+        </button>
+    );
+};
+
+export default AlertButton;
+```
+
+Example 3: 
+
+```jsx
+import React from "react";
+import PlayButton from "./PlayButton";
+import UploadButton from "./UploadButton";
+
+const App = () => {
+  return (
+    <div>
+      <PlayButton movieName={"Titanic"}></PlayButton>
+      <UploadButton></UploadButton>
+    </div>
+  );
+}
+
+export default App;
+```
+
+```jsx
+import React from 'react';
+import Button from './Button';
+
+const PlayButton = ({ movieName }) => {
+
+    const handlePlayClick = () => {
+        alert(`playing ${movieName}`);
+    }
+
+    return (
+        <div>
+            <Button onClick={handlePlayClick}>
+                <p>Play {movieName}</p>
+            </Button>
+        </div>
+    );
+};
+
+export default PlayButton;
+```
+
+```jsx
+import React from 'react';
+import Button from './Button';
+
+const UploadButton = () => {
+    return (
+        <div>
+            <Button onClick={() => alert("Uploaded")}>
+                <p>Upload Your movie</p>
+            </Button>
+        </div>
+    );
+};
+
+export default UploadButton;    
+```
+
+```jsx
+import React from 'react';
+
+const Button = ({ onClick, children }) => {
+    return (
+        <button onClick={onClick}>
+            {children}
+        </button>
+    );
+};
+
+export default Button
 ```
 
 ### Passing Data Using Callback Functions:
