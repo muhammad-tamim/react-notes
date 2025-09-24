@@ -1166,7 +1166,11 @@ export default App
 ---
 
 # useState()
-useState is a React Hook that lets you add state variables to functional components. State is data that can change over time (like counters, inputs, toggles, etc.). When state changes → React re-renders the component to show the new UI.
+In React, normal variables don’t trigger re-renders when they change. To show dynamic data that changes over time, we have to use a rect hooks called  useState.
+
+  - A React Hook is a built-in function that lets functional components use React features without writing a class.
+
+useState is a React Hook that lets you store a value in a state variable. When the state variable changes (using its stateFunction), React re-renders the component to show the new UI.
 
 syntax: 
 ```const [stateVariable, setStateFunction] = useState(initialValue);```
