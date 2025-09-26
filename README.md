@@ -25,6 +25,7 @@
 - [useState()](#usestate)
     - [How useState works behind the scenes:](#how-usestate-works-behind-the-scenes)
     - [Functional Updates:](#functional-updates)
+    - [State is isolated and private](#state-is-isolated-and-private)
 - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
     - [using useEffect()](#using-useeffect)
@@ -1300,6 +1301,45 @@ function App() {
 export default App;
 ```
 
+### State is isolated and private 
+In React, state is isolated and private because each component instance manages its own state independently. This means one component’s state cannot be directly accessed or modified by another component, ensuring that updates in one component do not affect the state of others unless the data is explicitly shared through props or context.
+
+```jsx
+import React from 'react';
+import Counter from './Counter';
+
+const App = () => {
+  return (
+    <div>
+      <Counter></Counter>
+      <Counter></Counter>
+      <Counter></Counter>
+    </div>
+  );
+};
+
+export default App;
+```
+
+```jsx
+import React, { useState } from 'react';
+
+const Counter = () => {
+
+    const [count, setCount] = useState(0)
+
+    return (
+        <div>
+            <h2>Count: {count}</h2>
+            <button onClick={() => setCount(count + 1)}>Increase</button>
+        </div>
+    );
+};
+
+export default Counter;
+```
+
+![images](./images/counter.png)
 
 ---
 
