@@ -23,6 +23,8 @@
     - [what is the difference between props, callback function and context api](#what-is-the-difference-between-props-callback-function-and-context-api)
 - [Event Handling in react](#event-handling-in-react)
 - [useState()](#usestate)
+    - [How useState works behind the scenes:](#how-usestate-works-behind-the-scenes)
+    - [Functional Updates:](#functional-updates)
 - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
     - [using useEffect()](#using-useeffect)
@@ -1168,9 +1170,9 @@ export default App
 # useState()
 In React, normal variables don’t trigger re-renders when they change. To show dynamic data that changes over time, we have to use a rect hooks called  useState.
 
-  - A React Hook is a built-in function that lets functional components use React features without writing a class.
+  - A React Hook is a built-in function that lets functional components use React features without writing a class. All react hooks start with "use" like (useState, useEffect etc)
 
-useState is a React Hook that lets you store a value in a state variable. When the state variable changes (using its stateFunction), React re-renders the component to show the new UI.
+useState is a React Hook that stores a value that can change over time. When we update the value using its setter function, React re-renders the component to show the new value in the UI.
 
 syntax: 
 ```const [stateVariable, setStateFunction] = useState(initialValue);```
@@ -1189,8 +1191,18 @@ function App() {
   );
 }
 ```
+here, 
+- Initial render: [0, setCount]
+- Click once → React re-renders → [1, setCount]
+- Click again → React re-renders → [2, setCount]
+- Click again → React re-renders → [3, setCount]
 
-**How useState works behind the scenes:**
+Means, every time your component renders, useState gives you an array containing two values:
+- The state variable with the value you stored. 
+- The state setter function which can update the state variable and trigger React to render the component again.
+
+
+### How useState works behind the scenes:
 
 ```html
 <!DOCTYPE html>
@@ -1250,7 +1262,7 @@ function App() {
 ```
 ![](./images/useState-behindTheScenes.png)
 
-**Functional Updates:**
+### Functional Updates:
 
 When the new state depends on the previous state, you have to use functional updates:
 
@@ -1287,6 +1299,8 @@ function App() {
 
 export default App;
 ```
+
+
 ---
 
 
