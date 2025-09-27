@@ -24,7 +24,7 @@
 - [Event Handling in react](#event-handling-in-react)
 - [useState()](#usestate)
     - [How useState works behind the scenes:](#how-usestate-works-behind-the-scenes)
-    - [Functional Updates:](#functional-updates)
+    - [Batching Updates and Functional Updates:](#batching-updates-and-functional-updates)
     - [State is isolated and private](#state-is-isolated-and-private)
 - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
@@ -1269,43 +1269,74 @@ Means, every time your component renders, useState gives you an array containing
 ```
 ![](./images/useState-behindTheScenes.png)
 
-### Functional Updates:
+### Batching Updates and Functional Updates:
 
-When the new state depends on the previous state, you have to use functional updates:
+When you update state in React, there are two important behaviors you need to understand:
+
+- Batching updates:
+By default, React batches multiple state updates into a single re-render. That means React collects all state changes, computes the final state, and only then updates the UI once.
 
 ```jsx
-import { useState } from "react";
-import './index.css'
-import './App.css'
+import React, { useState } from 'react';
 
-function App() {
+const Counter = () => {
   const [count, setCount] = useState(0);
 
-  const handleNormalUpdate = () => {
+  const handleClick = () => {
     setCount(count + 1);
     setCount(count + 1);
     setCount(count + 1);
-    // Result: count increases only by 1
-  };
-
-  const handleFunctionalUpdate = () => {
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-    // Result: count increases by 3, because React gives you the most recent state through prev.
+    console.log("Count inside handler:", count); 
   };
 
   return (
-    <>
-      <h1>Count: {count}</h1>
-      <button onClick={handleNormalUpdate}>Increase1</button>
-      <button onClick={handleFunctionalUpdate}>Increase2</button>
-    </>
+    <div>
+      <h2>Count: {count}</h2>
+      <button onClick={handleClick}>Increase</button>
+    </div>
   );
-}
+};
 
-export default App;
+export default Counter;
 ```
+here, 
+    setCount(0 + 1); - 1
+    setCount(0 + 1); - 1
+    setCount(0 + 1); - 1 -> final batch update
+
+- Functional updates:
+
+If your new state depends on the previous state, use a function form of setState, This ensures React always uses the most recent state, even if updates are batched:                
+
+```jsx
+import React, { useState } from 'react';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  const handleClick = () => {
+    setCount(prev => prev + 1);
+    setCount(prev => prev + 1);
+    setCount(prev => prev + 1);
+    console.log("Count inside handler:", count); 
+  };
+
+  return (
+    <div>
+      <h2>Count: {count}</h2>
+      <button onClick={handleClick}>Increase</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+here, 
+    setCount(prev => prev + 1); - (0 + 1) = 1
+    setCount(prev => prev + 1); - (1 + 1) = 2
+    setCount(prev => prev + 1); - (2 + 1) = 3
+
 
 ### State is isolated and private 
 In React, state is isolated and private because each component instance manages its own state independently. This means one component’s state cannot be directly accessed or modified by another component, ensuring that updates in one component do not affect the state of others unless the data is explicitly shared through props or context.
