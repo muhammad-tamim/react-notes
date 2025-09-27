@@ -33,6 +33,12 @@
 - [react component lifecycle](#react-component-lifecycle)
 - [useEffect](#useeffect)
 - [Pure and InPure function](#pure-and-inpure-function)
+- [Screen Updates in React](#screen-updates-in-react)
+    - [Step 1: Trigger a Render](#step-1-trigger-a-render)
+      - [Initial Render](#initial-render)
+      - [Re-render:](#re-render)
+    - [Step 2: React Renders Your Components](#step-2-react-renders-your-components)
+    - [Step 3: React Commits Changes to the DOM](#step-3-react-commits-changes-to-the-dom)
 
 
 
@@ -1794,5 +1800,153 @@ Output:
 Summation is 60
 Summation is 120
 Summation is 180
+
+---
+
+# Screen Updates in React
+
+Any screen update in a React app happens in **three steps**:
+
+1. **Trigger**
+2. **Render**
+3. **Commit**
+
+Think of it like a restaurant:
+
+* The **customer places an order** → Trigger
+* The **kitchen prepares the meal** → Render
+* The **waiter serves it to the table** → Commit
+
+![image](./images/trigger-render-commit.png)
+
+
+### Step 1: Trigger a Render
+
+There are two situations that cause React to trigger a render for component:
+
+1. **Initial Render** (when the app first loads)
+2. **Re-render** (when a component’s state or props update)
+
+#### Initial Render
+
+When your app starts, you trigger the very first render by using `createRoot` and calling `render` with your component:
+
+```jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+```
+
+#### Re-render:
+
+When state changes, React automatically triggers a re-render:
+
+```jsx
+import React, { useState } from 'react';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <h2>Count: {count}</h2>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+Every time you click the button, `setCount` updates the state → React triggers a re-render → UI updates with the new value.
+
+
+### Step 2: React Renders Your Components
+
+Once a render is triggered, React calls your components to **figure out what should be displayed**.
+
+* On the **initial render**, React calls your root component (e.g., `<App />`).
+* On **subsequent renders**, React calls only the component(s) whose state or props have changed.
+
+This process is **recursive**:
+If `<App />` returns `<Counter />`, React will then render `<Counter />`. If `<Counter />` returns more components, React will render those too, until React knows the full UI structure.
+
+Example:
+
+```jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+```
+
+```jsx
+// App.jsx
+import React from 'react';
+import Counter from './Counter';
+
+const App = () => {
+  return (
+    <div>
+      <h1>My App</h1>
+      <Counter />
+      <Counter />
+    </div>
+  );
+};
+
+export default App;
+```
+
+Here, React renders `<App />`, then renders each `<Counter />` inside it.
+
+
+### Step 3: React Commits Changes to the DOM
+
+After rendering, React compares the new result with the previous one (using the **Virtual DOM**).
+Then it updates the **real DOM** with the minimal necessary changes.
+
+* On **initial render**, React uses `appendChild()` to put all the elements on screen.
+* On **re-renders**, React applies only the differences (e.g., updating a single `<h2>` instead of rebuilding the whole page).
+
+
+```jsx
+import React, { useState } from 'react';
+
+const Message = () => {
+  const [text, setText] = useState("Hello!");
+
+  return (
+    <div>
+      <h2>{text}</h2>
+      <button onClick={() => setText("Welcome!")}>Change Text</button>
+    </div>
+  );
+};
+
+export default Message;
+```
+
+* On the **first render**, React commits:
+
+  ```html
+  <h2>Hello!</h2>
+  <button>Change Text</button>
+  ```
+* After clicking the button, only the text inside `<h2>` changes.
+  React doesn’t rebuild the button or the whole `div` — it just updates `"Hello!"` → `"Welcome!"`.
 
 ---
