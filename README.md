@@ -1,9 +1,10 @@
 <h1 align="center">React Notes</h1>
 
-<h4>Table of Contents</h4>
+<details>
+  <summary>Table of Contents</summary>
 
-
-- [Introduction](#introduction)
+- [Part 1: Core React:](#part-1-core-react)
+  - [Introduction](#introduction)
     - [The story of react:](#the-story-of-react)
     - [what is components:](#what-is-components)
     - [what is virtual DOM and How virtual dom work:](#what-is-virtual-dom-and-how-virtual-dom-work)
@@ -11,41 +12,48 @@
     - [react vs next vs vue](#react-vs-next-vs-vue)
     - [Create React App with Vite:](#create-react-app-with-vite)
     - [Inside the Vite + react:](#inside-the-vite--react)
-- [jsx](#jsx)
+  - [jsx](#jsx)
     - [How JSX Works behind the scenes:](#how-jsx-works-behind-the-scenes)
     - [JSX rules:](#jsx-rules)
-- [conditional rendering](#conditional-rendering)
-- [Rendering list in react](#rendering-list-in-react)
-- [Props, callback function, context api](#props-callback-function-context-api)
+  - [conditional rendering](#conditional-rendering)
+  - [Rendering list in react](#rendering-list-in-react)
+  - [Props, callback function, context api](#props-callback-function-context-api)
     - [props](#props)
     - [Passing Data Using Callback Functions:](#passing-data-using-callback-functions)
     - [Context API](#context-api)
     - [what is the difference between props, callback function and context api](#what-is-the-difference-between-props-callback-function-and-context-api)
-- [Event Handling in react](#event-handling-in-react)
-- [useState()](#usestate)
+  - [Event Handling in react](#event-handling-in-react)
+  - [useState()](#usestate)
     - [How useState works behind the scenes:](#how-usestate-works-behind-the-scenes)
     - [Batching Updates and Functional Updates:](#batching-updates-and-functional-updates)
     - [State is isolated and private](#state-is-isolated-and-private)
     - [Structuring State:](#structuring-state)
     - [Lifting state up](#lifting-state-up)
-- [data loading in react](#data-loading-in-react)
+  - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
     - [using useEffect()](#using-useeffect)
     - [Infinite api call issue:](#infinite-api-call-issue)
-- [react component lifecycle](#react-component-lifecycle)
-- [useEffect](#useeffect)
-- [Pure and InPure function](#pure-and-inpure-function)
-- [Screen Updates in React](#screen-updates-in-react)
+  - [react component lifecycle](#react-component-lifecycle)
+  - [useEffect](#useeffect)
+  - [Pure and InPure function](#pure-and-inpure-function)
+  - [Screen Updates in React](#screen-updates-in-react)
     - [Step 1: Trigger a Render](#step-1-trigger-a-render)
       - [Initial Render](#initial-render)
       - [Re-render:](#re-render)
     - [Step 2: React Renders Your Components](#step-2-react-renders-your-components)
     - [Step 3: React Commits Changes to the DOM](#step-3-react-commits-changes-to-the-dom)
+  - [Others:](#others)
+- [part 2: react packages:](#part-2-react-packages)
+
+</details>
+
+---
+---
 
 
+# Part 1: Core React:
 
-
-# Introduction
+## Introduction
 
 React is a component-based JavaScript frontend library developed by Facebook for building dynamic and interactive user interfaces, especially for single-page applications. It allows developers to create reusable UI components with efficiently update the DOM using a virtual DOM.
 
@@ -268,7 +276,7 @@ function App() {
 export default App
 ```
 
-# jsx
+## jsx
 
 JSX stands for JavaScript XML. JSX allows you to write HTML directly inside JavaScript, enabling you to create UI components more efficiently.
 
@@ -562,7 +570,7 @@ export default App;
 
 ---
 
-# conditional rendering
+## conditional rendering
 
 - using if-ele statement: 
 
@@ -622,7 +630,7 @@ export default App;
 ``` 
 ---
 
-# Rendering list in react
+## Rendering list in react
 
 In React, rendering a list means showing each element of an array using JSX and the map() method.
 
@@ -679,7 +687,7 @@ export default App;
 ```
 ---
 
-# Props, callback function, context api
+## Props, callback function, context api
 
 ### props
 
@@ -1081,7 +1089,7 @@ context api: Global (anywhere in tree)
 
 ---
 
-# Event Handling in react
+## Event Handling in react
 
 - Passing Functions and Arguments as Event Handlers
 
@@ -1176,7 +1184,7 @@ export default App
 ```
 ---
 
-# useState()
+## useState()
 In React, normal variables don’t trigger re-renders when they change. To show dynamic data that changes over time, we have to use a rect hooks called  useState.
 
   - A React Hook is a built-in function that lets functional components use React features without writing a class. All react hooks start with "use" like (useState, useEffect etc)
@@ -1749,7 +1757,7 @@ const DecreaseButton = ({ handleDecrease }) => {
 export default DecreaseButton;
 ```
 
-# data loading in react
+## data loading in react
 ### using use() with suspense:
 - suspense = Suspense is a React component that manages the loading state of asynchronous operations by showing a fallback UI (like a loader) until the data or resource is ready.
 - use() = use() is a React 19 hook that unwraps promises or async values inside components, it pausing rendering until the data is resolved and letting Suspense display a fallback during data loading.
@@ -1961,7 +1969,7 @@ export default App
 
 to see the infinite request, go to the browser network tab
 
-# react component lifecycle
+## react component lifecycle
 The React component lifecycle is the sequence of phases a component goes through from mounting to updating to unmounting.
 
 Lifecycle Phases:
@@ -1973,7 +1981,7 @@ In functional components, the useEffect hook can follow all these lifecycle phas
 
 ---
 
-# useEffect
+## useEffect
 useEffect is a React Hook that allows you to perform side effects in functional components.
 
 Examples of Side Effects:
@@ -2122,7 +2130,7 @@ Note: Without a cleanup function, the code works at first, but over time it can 
 
 ---
 
-# Pure and InPure function
+## Pure and InPure function
 A pure function is a function that:
 - Always returns the same output for the same input.
 - Does not cause side effects (doesn’t modify variables outside its scope, doesn’t touch the DOM directly, doesn’t make API calls).
@@ -2202,7 +2210,7 @@ Summation is 180
 
 ---
 
-# Screen Updates in React
+## Screen Updates in React
 
 Any screen update in a React app happens in **three steps**:
 
@@ -2349,3 +2357,8 @@ export default Message;
   React doesn’t rebuild the button or the whole `div` — it just updates `"Hello!"` → `"Welcome!"`.
 
 ---
+
+## Others: 
+
+
+# part 2: react packages:
