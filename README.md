@@ -2,13 +2,13 @@
 
 
 - [Part 1: Core React:](#part-1-core-react)
+  - [Create React App using Vite:](#create-react-app-using-vite)
   - [Introduction](#introduction)
     - [The story of react:](#the-story-of-react)
     - [what is components:](#what-is-components)
     - [what is virtual DOM and How virtual dom work:](#what-is-virtual-dom-and-how-virtual-dom-work)
     - [library vs framework](#library-vs-framework)
     - [react vs next vs vue](#react-vs-next-vs-vue)
-    - [Create React App with Vite:](#create-react-app-with-vite)
     - [Inside the Vite + react:](#inside-the-vite--react)
   - [jsx](#jsx)
     - [How JSX Works behind the scenes:](#how-jsx-works-behind-the-scenes)
@@ -46,6 +46,47 @@
 
 
 # Part 1: Core React:
+
+## Create React App using Vite:
+
+Vite is a modern build tool that offers lightning-fast startup and optimized development experience for React and other frameworks.
+
+**Step 1: Create React App with Vite** 
+```bash
+npm create vite@latest project-name -- --template react
+```
+
+**Step 2:  Install Dependencies**
+
+```bash
+npm i react-router tailwindcss @tailwindcss/vite -D daisyui@latest
+```
+
+**step 3: setup tailwind and daisyui:**
+
+vite.config.js:
+
+```js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+})
+```
+
+Import Tailwind CSS and daisyUi to index.css:
+
+```js
+@import "tailwindcss";
+@plugin "daisyui";
+```
+
+![image not found](./images/react-page.png)
+
+---
 
 ## Introduction
 
@@ -162,59 +203,7 @@ Here, we have a component that has a `<div>` and inside the `<div>` two elements
 | Routing      | using react router or others libraries | Built-in file based                                           | built-in                                     |
 | Best For     | Single page apps                       | SEO focused large scale apps                                  | single page to medium apps                   |
 
-### Create React App with Vite:
 
-Vite is a modern build tool that offers lightning-fast startup and optimized development experience for React and other frameworks.
-
-**Step 1: Create React App with Vite** 
-```bash
-npm create vite@latest project-name -- --template react
-```
-
-**Step 2:  Install Dependencies**
-
-```bash
-cd my-react-app
-npm i tailwindcss @tailwindcss/vite -D daisyui@latest
-```
-
-**Step 3: run you project on vs code**
-
-```js
-code .
-```
-
-**step 4: setup tailwind and daisyui:**
-
-vite.config.js:
-
-```js
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-})
-```
-
-Import Tailwind CSS and daisyUi to index.css:
-
-```js
-@import "tailwindcss";
-@plugin "daisyui";
-```
-
-**step 5: Run the development server:**
-
-```bash
-npm run dev
-```
-
-![image not found](./images/react-page.png)
-
----
 
 ### Inside the Vite + react: 
 
