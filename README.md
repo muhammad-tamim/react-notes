@@ -40,8 +40,6 @@
       - [Re-render:](#re-render)
     - [Step 2: React Renders Your Components](#step-2-react-renders-your-components)
     - [Step 3: React Commits Changes to the DOM](#step-3-react-commits-changes-to-the-dom)
-  - [Others:](#others)
-    - [How to use google fonts in a react project:](#how-to-use-google-fonts-in-a-react-project)
 - [part 2: React Router:](#part-2-react-router)
 
 ---
@@ -2354,58 +2352,6 @@ export default Message;
 
 ---
 
-## Others: 
-
-### How to use google fonts in a react project:
-There are two common ways to use Google Fonts in a React project:
-
-- way 1: use inside the `index.css`:
-
-```css
-@import "tailwindcss";
-@plugin "daisyui";
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
-body {
-    font-family: "Inter", sans-serif;
-}
-```
-
-- way 2: use inside the `index.html`:
-
-```html
-<!doctype html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>project-name</title>
-  <!-- google fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-    rel="stylesheet">
-  <!-- add font family to the body using css -->
-  <style>
-    body {
-      font-family: "Inter", sans-serif;
-    }
-  </style>
-
-</head>
-
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-</body>
-
-</html>
-```
----
 
 # part 2: React Router:
 
