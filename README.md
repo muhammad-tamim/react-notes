@@ -45,6 +45,7 @@
   - [Others:](#others)
     - [How to use google fonts in a react project:](#how-to-use-google-fonts-in-a-react-project)
 - [part 2: react packages:](#part-2-react-packages)
+  - [how to use react-icons](#how-to-use-react-icons)
 
 </details>
 
@@ -2413,3 +2414,23 @@ body {
 ---
 
 # part 2: react packages:
+
+## how to use react-icons
+
+- step 1: `npm i react-icons`
+- stop 2: 
+
+```jsx
+import { FaBeer } from "react-icons/fa";
+
+function App() {
+  return (
+    <div>
+      <h1>Cheers! <FaBeer size={40}/></h1>
+    </div>
+  );
+}
+
+export default App;
+```
+---
