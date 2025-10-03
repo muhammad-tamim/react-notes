@@ -26,6 +26,7 @@
     - [How useState works behind the scenes:](#how-usestate-works-behind-the-scenes)
     - [Batching Updates and Functional Updates:](#batching-updates-and-functional-updates)
     - [State is isolated and private](#state-is-isolated-and-private)
+    - [Structuring State:](#structuring-state)
 - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
     - [using useEffect()](#using-useeffect)
@@ -1380,6 +1381,318 @@ export default Counter;
 
 ---
 
+### Structuring State:
+
+- Group related state:
+If two state variables always update together, merge them:
+
+```jsx
+import { useState } from "react";
+
+const UserForm = () => {
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+
+    const handleChange = (e) => {
+        // setFirstName(e.target.value.split(" ")[0]);
+        // setLastName(e.target.value.split(" ")[1]);
+        const parts = e.target.value.split(" ");
+        setFirstName(parts[0]);
+        setLastName(parts[1]);
+    };
+    return (
+        <div>
+            <input onChange={handleChange} placeholder="Full name" />
+            <p>{firstName} {lastName}</p>
+        </div>
+    );
+};
+
+export default UserForm;
+```
+
+```jsx
+import { useState } from "react";
+
+const UserForm = () => {
+    const [name, setName] = useState({ first: "", last: "" });
+
+    const handleChange = (e) => {
+        const [first, last] = e.target.value.split(" ");
+        setName({ first, last });
+    };
+
+    return (
+        <div>
+            <input onChange={handleChange} placeholder="Full name" />
+            <p>{name.first} {name.last}</p>
+        </div>
+    );
+};
+
+export default UserForm;
+```
+
+```jsx
+import { useState } from "react";
+
+const UserForm = () => {
+    const [name, setName] = useState({ first: "", last: "" });
+
+    const handleChange = (e) => {
+        const [first, last] = e.target.value.split(" ");
+        setName({ first, last });
+    };
+
+    return (
+        <div>
+            <input onChange={handleChange} placeholder="Full name" />
+            <p>{name.first} {name.last}</p>
+        </div>
+    );
+};
+
+export default UserForm;
+```
+
+Note: When state is stored as an object, calling the state updater replaces the entire object. This means you can’t update just one property directly `setName({ first: "Muhammad" })`, because it will remove the other properties (like last). To safely update a single field while keeping the rest, copy the existing object and then override the field you want, for example: `setName({ ...name, first: "Muhammad" });`
+
+- Avoid contradictions in state:
+A contradiction in state happens when different pieces of state disagree with each other, creating an impossible or inconsistent situation.
+
+Example: A traffic light with three colors: Red, Yellow, Green.
+
+```jsx
+const [isRed, setIsRed] = useState(false);
+const [isYellow, setIsYellow] = useState(false);
+const [isGreen, setIsGreen] = useState(false);
+```
+If someone accidentally does:
+
+```jsx
+setIsRed(true);
+setIsGreen(true);
+```
+Now the traffic light is red and green at the same time—which is impossible in real life. This is called an impossible state.
+
+Better approach: Store a single piece of state that represents the current color:
+
+```jsx
+const [color, setColor] = useState("red");
+```
+Now the traffic light can only ever be one color at a time, avoiding contradictions and impossible states.
+
+- Avoid redundant state  
+Redundant state is unnecessary state that can be calculated from other state or props.
+
+```jsx
+import { useState } from "react";
+
+const UserForm = () => {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [fullName, setFullName] = useState(''); // redundant state
+
+    const handleChange = (e) => {
+        const [first, last] = e.target.value.split(" ");
+        setFirstName(first || '');
+        setLastName(last || '');
+        setFullName(`${first || ''} ${last || ''}`); // manually updating fullName
+    };
+
+    return (
+        <div>
+            <input onChange={handleChange} placeholder="Full name" />
+            <p>Full Name: {fullName}</p>
+            <p>First Name: {firstName}</p>
+            <p>Last Name: {lastName}</p>
+        </div>
+    );
+};
+
+export default UserForm;
+```
+
+```jsx
+import { useState } from "react";
+
+const UserForm = () => {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+
+    const handleChange = (e) => {
+        const [first, last] = e.target.value.split(" ");
+        setFirstName(first || '');
+        setLastName(last || '');
+    };
+
+    // fullName is derived from firstName and lastName
+    const fullName = `${firstName} ${lastName}`;
+
+    return (
+        <div>
+            <input onChange={handleChange} placeholder="Full name" />
+            <p>Full Name: {fullName}</p>
+            <p>First Name: {firstName}</p>
+            <p>Last Name: {lastName}</p>
+        </div>
+    );
+};
+
+export default UserForm;
+```
+
+- Avoid Duplication in State:
+
+```jsx
+import { useState } from "react";
+
+const TodoApp = () => {
+  const [todos, setTodos] = useState(["Buy milk"]);
+  const [todoCount, setTodoCount] = useState(1); // duplicated state
+
+  const addTodo = (todo) => {
+    setTodos([...todos, todo]);
+    setTodoCount(todoCount + 1); // must manually update count
+  };
+
+  return (
+    <div>
+      <h2>Todos ({todoCount})</h2>
+      <ul>
+        {todos.map((t, i) => (
+          <li key={i}>{t}</li>
+        ))}
+      </ul>
+      <button onClick={() => addTodo("Read book")}>Add Todo</button>
+    </div>
+  );
+};
+
+export default TodoApp;
+```
+
+```jsx
+import { useState } from "react";
+
+const TodoApp = () => {
+  const [todos, setTodos] = useState(["Buy milk"]);
+
+  const addTodo = (todo) => {
+    setTodos([...todos, todo]);
+  };
+
+  // Derived value instead of storing count
+  const todoCount = todos.length;
+
+  return (
+    <div>
+      <h2>Todos ({todoCount})</h2>
+      <ul>
+        {todos.map((t, i) => (
+          <li key={i}>{t}</li>
+        ))}
+      </ul>
+      <button onClick={() => addTodo("Read book")}>Add Todo</button>
+    </div>
+  );
+};
+
+export default TodoApp;
+```
+
+- Don’t Mirror Props in State:
+
+```jsx
+const Message = ({ messageColor }) => {
+  const [color, setColor] = useState(messageColor);
+}
+```
+
+Here, a color state variable is initialized to the messageColor prop. The problem is that if the parent component passes a different value of messageColor later (for example, 'red' instead of 'blue'), the color state variable would not be updated! The state is only initialized during the first render.
+
+This is why “mirroring” some prop in a state variable can lead to confusion. Instead, use the messageColor prop directly in your code. If you want to give it a shorter name, use a constant:
+
+```jsx
+const Message = ({ messageColor }) => {
+  const [color, setColor] = useState(messageColor);
+}
+```
+
+- Avoid Deeply Nested State:
+
+here, 
+    - Every time you update a nested property, you must copy each parent level. 
+    - Code is verbose and repetitive. 
+    - Easy to make mistakes and accidentally overwrite other fields.
+
+```jsx
+import { useState } from "react";
+
+const UserForm = () => {
+  const [user, setUser] = useState({
+    name: { first: "", last: "" },
+    address: { city: "", country: "" },
+  });
+
+  const handleFirstNameChange = (e) => {
+    // Must manually copy nested objects
+    setUser({
+      ...user,
+      name: { ...user.name, first: e.target.value },
+    });
+  };
+
+  return (
+    <div>
+      <input
+        placeholder="First Name"
+        value={user.name.first}
+        onChange={handleFirstNameChange}
+      />
+      <p>Full Name: {user.name.first} {user.name.last}</p>
+    </div>
+  );
+};
+```
+
+```jsx
+import { useState } from "react";
+
+const UserForm = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+
+  return (
+    <div>
+      <input
+        placeholder="First Name"
+        value={firstName}
+        onChange={(e) => setFirstName(e.target.value)}
+      />
+      <input
+        placeholder="Last Name"
+        value={lastName}
+        onChange={(e) => setLastName(e.target.value)}
+      />
+      <input
+        placeholder="City"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+      />
+      <input
+        placeholder="Country"
+        value={country}
+        onChange={(e) => setCountry(e.target.value)}
+      />
+      <p>Full Name: {firstName} {lastName}</p>
+      <p>Location: {city}, {country}</p>
+    </div>
+  );
+};
+```
 
 # data loading in react
 ### using use() with suspense:
