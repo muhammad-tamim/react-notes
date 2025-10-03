@@ -1,7 +1,5 @@
 <h1 align="center">React Notes</h1>
 
-<details>
-  <summary>Table of Contents</summary>
 
 - [Part 1: Core React:](#part-1-core-react)
   - [Introduction](#introduction)
@@ -44,8 +42,7 @@
     - [Step 3: React Commits Changes to the DOM](#step-3-react-commits-changes-to-the-dom)
   - [Others:](#others)
     - [How to use google fonts in a react project:](#how-to-use-google-fonts-in-a-react-project)
-
-</details>
+- [part 2: React Router:](#part-2-react-router)
 
 ---
 
@@ -2409,4 +2406,6 @@ body {
 </html>
 ```
 ---
+
+# part 2: React Router:
 
