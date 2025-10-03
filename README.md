@@ -46,6 +46,7 @@
     - [How to use google fonts in a react project:](#how-to-use-google-fonts-in-a-react-project)
 - [part 2: react packages:](#part-2-react-packages)
   - [how to use react-icons](#how-to-use-react-icons)
+  - [How to use lucide-react icons](#how-to-use-lucide-react-icons)
 
 </details>
 
@@ -2432,5 +2433,28 @@ function App() {
 }
 
 export default App;
+```
+---
+
+## How to use lucide-react icons
+
+- step 1: `npm i lucide-react`
+- stop 2: 
+
+```jsx
+import { Camera, Heart, Github } from "lucide-react";
+
+function App() {
+  return (
+    <div>
+      <Camera color="blue" size={36} />
+      <Heart color="red" size={36} />
+      <Github color="black" size={36} />
+    </div>
+  );
+}
+
+export default App;
+
 ```
 ---
