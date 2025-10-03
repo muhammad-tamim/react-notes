@@ -44,15 +44,13 @@
     - [Step 3: React Commits Changes to the DOM](#step-3-react-commits-changes-to-the-dom)
   - [Others:](#others)
     - [How to use google fonts in a react project:](#how-to-use-google-fonts-in-a-react-project)
-- [part 2: react packages:](#part-2-react-packages)
-  - [how to use react-icons](#how-to-use-react-icons)
-  - [How to use lucide-react icons](#how-to-use-lucide-react-icons)
-  - [How to use recharts](#how-to-use-recharts)
-  - [**Note:** Follow the https://recharts.org/en-US documentation to learn and use, above i add just basic examples.](#note-follow-the-httpsrechartsorgen-us-documentation-to-learn-and-use-above-i-add-just-basic-examples)
+- [part 2: React Components \& Libraries that i used:](#part-2-react-components--libraries-that-i-used)
+  - [react-icons](#react-icons)
+  - [lucide-react icons](#lucide-react-icons)
+  - [recharts](#recharts)
 
 </details>
 
----
 ---
 
 
@@ -2416,9 +2414,9 @@ body {
 ```
 ---
 
-# part 2: react packages:
+# part 2: React Components & Libraries that i used:
 
-## how to use react-icons
+## react-icons
 
 - step 1: `npm i react-icons`
 - stop 2: 
@@ -2438,7 +2436,7 @@ export default App;
 ```
 ---
 
-## How to use lucide-react icons
+## lucide-react icons
 
 - step 1: `npm i lucide-react`
 - stop 2: 
@@ -2461,7 +2459,8 @@ export default App;
 ```
 ---
 
-## How to use recharts
+
+## recharts
 
 - step 1: `npm install recharts`
 - stop 2: 
@@ -2557,4 +2556,5 @@ export default App;
 ![image](./images/rechart-3.png)
 
 **Note:** Follow the [https://recharts.org/en-US](https://recharts.org/en-US) documentation to learn and use, above i add just basic examples.
+
 ---
