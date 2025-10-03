@@ -47,6 +47,8 @@
 - [part 2: react packages:](#part-2-react-packages)
   - [how to use react-icons](#how-to-use-react-icons)
   - [How to use lucide-react icons](#how-to-use-lucide-react-icons)
+  - [How to use recharts](#how-to-use-recharts)
+  - [**Note:** Follow the https://recharts.org/en-US documentation to learn and use, above i add just basic examples.](#note-follow-the-httpsrechartsorgen-us-documentation-to-learn-and-use-above-i-add-just-basic-examples)
 
 </details>
 
@@ -2457,4 +2459,102 @@ function App() {
 export default App;
 
 ```
+---
+
+## How to use recharts
+
+- step 1: `npm install recharts`
+- stop 2: 
+
+Choose the type of chart you need (LineChart, BarChart, AreaChart, PieChart etc):
+
+```jsx
+import { LineChart, Line } from "recharts";
+
+const data = [
+  { month: "Jan", visitors: 1200 },
+  { month: "Feb", visitors: 2100 },
+  { month: "Mar", visitors: 800 },
+  { month: "Apr", visitors: 1600 },
+  { month: "May", visitors: 2500 },
+];
+
+function App() {
+  return (
+    <div className="flex justify-center">
+      <LineChart width={600} height={300} data={data}>
+        <Line dataKey={"visitors"}></Line>
+      </LineChart>
+    </div>
+  );
+}
+
+export default App;
+```
+![image](./images/rechart-1.png)
+
+Add supporting components (XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer etc):
+
+```jsx
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend } from "recharts";
+
+const data = [
+  { month: "Jan", visitors: 1200 },
+  { month: "Feb", visitors: 2100 },
+  { month: "Mar", visitors: 800 },
+  { month: "Apr", visitors: 1600 },
+  { month: "May", visitors: 2500 },
+];
+
+function App() {
+  return (
+    <div className="flex justify-center mt-10">
+      <LineChart width={600} height={300} data={data}>
+        <CartesianGrid></CartesianGrid>
+        <Line dataKey={"visitors"}></Line>
+        <XAxis dataKey={"month"}></XAxis>
+        <YAxis></YAxis>
+        <Legend />
+      </LineChart>
+    </div>
+  );
+}
+
+export default App;
+```
+![image](./images/rechart-2.png)
+
+Adjust the props of your components:
+
+```jsx
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, Tooltip } from "recharts";
+
+const data = [
+  { month: "Jan", visitors: 1200 },
+  { month: "Feb", visitors: 2100 },
+  { month: "Mar", visitors: 800 },
+  { month: "Apr", visitors: 1600 },
+  { month: "May", visitors: 2500 },
+];
+
+function App() {
+  return (
+    <div className="flex justify-center mt-10">
+      <LineChart width={600} height={300} data={data}>
+        <CartesianGrid stroke={"#fc0303"} strokeDasharray={"5 5"}></CartesianGrid>
+        <Line dataKey={"visitors"} type={"monotone"} stroke={"blue"} strokeWidth={"20"} name={"x axis"}></Line>
+        <XAxis dataKey={"month"}></XAxis>
+        <YAxis></YAxis>
+        <Legend align={"left"} />
+        <Tooltip />
+      </LineChart>
+    </div>
+  );
+}
+
+export default App;
+```
+![image](./images/rechart-3.png)
+
+**Note:** Follow the [https://recharts.org/en-US](https://recharts.org/en-US) documentation to learn and use, above i add just basic examples.
 ---
