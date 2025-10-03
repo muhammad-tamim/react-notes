@@ -27,6 +27,7 @@
     - [Batching Updates and Functional Updates:](#batching-updates-and-functional-updates)
     - [State is isolated and private](#state-is-isolated-and-private)
     - [Structuring State:](#structuring-state)
+    - [Lifting state up](#lifting-state-up)
 - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
     - [using useEffect()](#using-useeffect)
@@ -1692,6 +1693,60 @@ const UserForm = () => {
     </div>
   );
 };
+```
+### Lifting state up
+Lifting state up in React is a process where a child component can update the parent’s state. The parent passes the state down via props and provides callback functions that allow children to modify the parent’s state.
+
+```jsx
+import React, { useState } from 'react';
+import IncreaseButton from './IncreaseButton';
+import DecreaseButton from './DecreaseButton';
+
+const Counter = () => {
+
+    const [count, setCount] = useState(0);
+
+    const handleIncrease = () => setCount(count + 1);
+    const handleDecrease = () => setCount(count - 1);
+
+    return (
+        <div>
+            <h1>{count}</h1>
+            <IncreaseButton handleIncrease={handleIncrease} />
+            <DecreaseButton handleDecrease={handleDecrease} />
+        </div>
+    );
+};
+
+export default Counter;
+```
+
+```jsx
+import React from 'react';
+
+const IncreaseButton = ({ handleIncrease }) => {
+    return (
+        <div>
+            <button onClick={handleIncrease}>Increase</button>
+        </div>
+    );
+};
+
+export default IncreaseButton;
+```
+
+```jsx
+import React from 'react';
+
+const DecreaseButton = ({ handleDecrease }) => {
+    return (
+        <div>
+            <button onClick={handleDecrease}>Decrease</button>
+        </div>
+    );
+};
+
+export default DecreaseButton;
 ```
 
 # data loading in react
