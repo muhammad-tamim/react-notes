@@ -46,6 +46,7 @@
     - [Difference between children props in react \&  Outlet component in react router:](#difference-between-children-props-in-react---outlet-component-in-react-router)
   - [Link \& NavLink:](#link--navlink)
     - [isActive property on navLink:](#isactive-property-on-navlink)
+  - [error handling in react router:](#error-handling-in-react-router)
 
 ---
 
@@ -2802,4 +2803,71 @@ with className:
 >
   Blogs
 </NavLink>
+```
+
+
+## error handling in react router: 
+
+
+- errorElement:  Catches runtime errors and loader/action errors for Root and all its children only, Also acts as fallback for unmatched paths in these routes if no child matches 
+- path: "*": catches all unmatched paths (404) globally, but it Does NOT catch runtime errors — use errorElement for that
+
+Note: If all parent routes have errorElements that handle errors and fallback for unmatched children, you don’t technically need * wildcard routes. The errorElement will already show a fallback for any unmatched nested paths.
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+
+// Import React Router dependencies
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+// Import components
+import Root from './components/Root';
+import Home from './components/Home';
+import About from './components/About';
+import BlogLayout from './components/Blog/BlogLayout';
+import AllPosts from './components/Blog/AllPost';
+
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    errorElement: <h1>Page not found</h1>,
+    children: [
+      {
+        path: '/',
+        Component: Home
+      },
+      {
+        path: '/about',
+        Component: About
+      },
+      {
+        path: '/blog',
+        Component: BlogLayout,
+        errorElement: <h1>page not found</h1>,
+        children: [
+          {
+            index: true,
+            Component: AllPosts
+          },
+        ]
+      },
+      {
+        path: "*",
+        element: <h1>page not found</h1>
+      }
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
 ```
