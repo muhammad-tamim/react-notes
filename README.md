@@ -44,6 +44,8 @@
   - [Getting started to React Routing:](#getting-started-to-react-routing)
   - [Nested Routing:](#nested-routing)
     - [Difference between children props in react \&  Outlet component in react router:](#difference-between-children-props-in-react---outlet-component-in-react-router)
+  - [Link \& NavLink:](#link--navlink)
+    - [isActive property on navLink:](#isactive-property-on-navlink)
 
 ---
 
@@ -2608,4 +2610,196 @@ export default function Root() {
         </div>
     );
 }
+```
+
+## Link & NavLink: 
+
+`<Link>` is used to navigate between pages without reloading the browser — unlike a regular `<a>` tag.
+It changes the URL client-side and lets React Router render the new route.
+
+`<NavLink>` works just like `<Link>`, but It provides an isActive property so you can style the link differently either using inline css, external css or tailwind css.
+
+```
+src/
+├── components/
+│   ├── Root.jsx
+│   ├── Home.jsx
+│   ├── About.jsx
+│   └── Blogs.jsx
+├── index.css
+└── main.jsx
+```
+
+```jsx
+// Root.jsx
+import React from 'react';
+import { Link, NavLink, Outlet } from 'react-router';
+
+const Root = () => {
+    return (
+        <div>
+            <nav style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+                {/* Regular navigation using Link */}
+                <Link to="/">Home</Link>
+                <Link to="/about">About</Link>
+
+                {/* Navigation with active style using NavLink */}
+                <NavLink
+                    to="/blogs"
+                    style={({ isActive }) => ({
+                        color: isActive ? 'orange' : 'black',
+                        fontWeight: isActive ? 'bold' : 'normal',
+                    })}
+                >
+                    Blogs
+                </NavLink>
+            </nav>
+
+            {/* Child routes will appear here */}
+            <Outlet />
+        </div>
+    );
+};
+
+export default Root;
+```
+
+```jsx
+// Root.jsx
+import React from 'react';
+import { Link, NavLink, Outlet } from 'react-router';
+
+const Root = () => {
+    return (
+        <div>
+            <nav style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+                {/* Regular navigation using Link */}
+                <Link to="/">Home</Link>
+                <Link to="/about">About</Link>
+
+                {/* Navigation with active style using NavLink */}
+                <NavLink
+                    to="/blogs"
+                    style={({ isActive }) => ({
+                        color: isActive ? 'orange' : 'black',
+                        fontWeight: isActive ? 'bold' : 'normal',
+                    })}
+                >
+                    Blogs
+                </NavLink>
+            </nav>
+
+            {/* Child routes will appear here */}
+            <Outlet />
+        </div>
+    );
+};
+
+export default Root;
+```
+
+```jsx
+// Home.jsx
+import React from 'react';
+
+const Home = () => {
+    return (
+        <div>
+            <h2>Home Page</h2>
+            <p>Welcome to my blog website!</p>
+        </div>
+    );
+};
+
+export default Home;
+```
+
+```jsx
+// About.jsx
+import React from 'react';
+
+const About = () => {
+    return (
+        <div>
+            <h2>About Me</h2>
+            <p>I'm a passionate web developer sharing my learning journey!</p>
+        </div>
+    );
+};
+
+export default About;
+```
+
+```jsx
+// Blogs.jsx
+import React from 'react';
+
+const Blogs = () => {
+    return (
+        <div>
+            <h2>All Blog Posts</h2>
+            <ul>
+                <li>Understanding React Hooks</li>
+                <li>How React Router Works</li>
+                <li>10 Tips to Write Clean Code</li>
+            </ul>
+        </div>
+    );
+};
+
+export default Blogs;
+```
+
+### isActive property on navLink: 
+
+In React Router, if you pass a function to the style or className prop, it will automatically receive an object called: 
+
+```jsx
+{ isActive: true }  // when the link matches the current URL
+{ isActive: false } // when it does not
+```
+so, we can use this isActive object property value to dynamically styles active navbar menus.
+
+
+Here we destructure the isActive property directly from the object:
+
+```jsx
+<NavLink
+  to="/blogs"
+  style={({ isActive }) => ({
+    color: isActive ? 'orange' : 'black',
+    fontWeight: isActive ? 'bold' : 'normal'
+  })}
+>
+  Blogs
+</NavLink>
+```
+
+without destructuring:
+
+```jsx
+<NavLink
+  to="/blogs"
+  style={(linkInfo) => ({
+    color: linkInfo.isActive ? 'orange' : 'black',
+    fontWeight: linkInfo.isActive ? 'bold' : 'normal'
+  })}
+>
+  Blogs
+</NavLink>
+```
+
+with className: 
+
+```jsx
+<NavLink
+  to="/blogs"
+  className={({ isActive }) =>
+            isActive
+              ? "text-orange-500 font-bold"
+              : "text-black font-normal"
+          }
+>
+  Blogs
+</NavLink>
 ```
