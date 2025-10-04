@@ -42,6 +42,8 @@
     - [Step 3: React Commits Changes to the DOM](#step-3-react-commits-changes-to-the-dom)
 - [part 2: React Router:](#part-2-react-router)
   - [Getting started to React Routing:](#getting-started-to-react-routing)
+  - [Nested Routing:](#nested-routing)
+    - [Difference between children props in react \&  Outlet component in react router:](#difference-between-children-props-in-react---outlet-component-in-react-router)
 
 ---
 
@@ -2375,3 +2377,235 @@ createRoot(document.getElementById('root')).render(
 here,
 - createBrowserRouter → Holds all route information (paths, components, elements, children etc).
 - RouterProvider → Uses that router array of objects to make the routes work in your React app.
+
+## Nested Routing:
+
+```
+src/
+├── components/
+│   ├── Root.jsx
+│   ├── Home.jsx
+│   ├── About.jsx
+│   ├── Blog/
+│   │   ├── BlogLayout.jsx
+│   │   ├── AllPosts.jsx
+│   │   └── PostDetails.jsx
+└── main.jsx
+```
+
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+
+// Import React Router dependencies
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+// Import components
+import Root from './components/Root';
+import Home from './components/Home';
+import About from './components/About';
+import BlogLayout from './components/Blog/BlogLayout';
+import AllPosts from './components/Blog/AllPost';
+
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    children: [
+      {
+        path: '/',
+        Component: Home
+      },
+      {
+        path: '/about',
+        Component: About
+      },
+      {
+        path: '/blog',
+        Component: BlogLayout,
+        children: [
+          {
+            index: true,
+            Component: AllPosts
+          },
+        ]
+      }
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+
+```jsx
+// Root.jsx
+import { Outlet } from 'react-router';
+
+export default function Root() {
+    return (
+        <div>
+            <h1>My Simple Blog</h1>
+            <Outlet /> {/* Nested routes will render here */}
+        </div>
+    );
+}
+```
+
+
+```jsx
+// Home.jsx:
+export default function Home() {
+    return (
+        <div>
+            <h2>Home Page</h2>
+            <p>Welcome to my blog website!</p>
+        </div>
+    );
+}
+```
+
+
+```jsx
+// About.jsx:
+export default function About() {
+    return (
+        <div>
+            <h2>About Me</h2>
+            <p>This is a simple blog site built with React Router.</p>
+        </div>
+    );
+}
+```
+
+
+```jsx
+// BlogLayout.jsx
+import { Outlet } from 'react-router';
+
+export default function BlogLayout() {
+    return (
+        <div>
+            <h2>Blog Section</h2>
+            <Outlet /> {/* Nested routes for blog posts */}
+        </div>
+    );
+}
+```
+
+
+```jsx
+// AllPost.jsx:
+export default function AllPosts() {
+    return (
+        <div>
+            <h3>All Blog Posts</h3>
+            <p>Here is a list of all blog posts.</p>
+        </div>
+    );
+}
+```
+
+here, 
+- path: '/' → Defines the main route for the entire website.
+- children: [...] → Contains nested routes that belong to the parent route.
+- path: '/' inside children → Refers to the same route as the parent (/), meaning this child route will render when the user visits the main route (/).
+- index: true → Defines a default child route. It renders automatically when the parent route is active — you don’t need to write a manual path for it.
+- `<Outlet />` → is a React Router component that acts as a placeholder for rendering nested routes dynamically.
+  
+
+### Difference between children props in react &  Outlet component in react router:
+
+- children is a built-in React prop used to pass nested elements directly inside a component.
+
+```jsx
+function Card({ children }) {
+  return <div className="card">{children}</div>;
+}
+
+export default function App() {
+  return (
+    <Card>
+      <h2>Hello World</h2>
+      <p>This is inside the Card component</p>
+    </Card>
+  );
+}
+```
+
+- `<Outlet />` is a React Router component that acts as a placeholder for rendering nested routes
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+
+// Import React Router dependencies
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+// Import components
+import Root from './components/Root';
+import Home from './components/Home';
+import About from './components/About';
+import BlogLayout from './components/Blog/BlogLayout';
+import AllPosts from './components/Blog/AllPost';
+
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    children: [
+      {
+        path: '/',
+        Component: Home
+      },
+      {
+        path: '/about',
+        Component: About
+      },
+      {
+        path: '/blog',
+        Component: BlogLayout,
+        children: [
+          {
+            index: true,
+            Component: AllPosts
+          },
+        ]
+      }
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+// Root.jsx
+import { Outlet } from 'react-router';
+
+export default function Root() {
+    return (
+        <div>
+            <h1>My Simple Blog</h1>
+            <Outlet /> {/* Nested routes will render here */}
+        </div>
+    );
+}
+```
