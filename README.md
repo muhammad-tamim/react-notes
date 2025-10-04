@@ -41,6 +41,7 @@
     - [Step 2: React Renders Your Components](#step-2-react-renders-your-components)
     - [Step 3: React Commits Changes to the DOM](#step-3-react-commits-changes-to-the-dom)
 - [part 2: React Router:](#part-2-react-router)
+  - [Getting started to React Routing:](#getting-started-to-react-routing)
 
 ---
 
@@ -2344,3 +2345,33 @@ export default Message;
 
 # part 2: React Router:
 
+## Getting started to React Routing: 
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+
+// Import React Router dependencies
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <h1>Welcome to the Home Page</h1>,
+
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+here,
+- createBrowserRouter → Holds all route information (paths, components, elements, children etc).
+- RouterProvider → Uses that router array of objects to make the routes work in your React app.
