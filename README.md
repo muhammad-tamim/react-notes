@@ -44,8 +44,10 @@
   - [Getting started to React Routing:](#getting-started-to-react-routing)
   - [Nested Routing:](#nested-routing)
     - [Difference between children props in react \&  Outlet component in react router:](#difference-between-children-props-in-react---outlet-component-in-react-router)
-  - [Link \& NavLink:](#link--navlink)
-    - [Different way tos use NavLink:](#different-way-tos-use-navlink)
+  - [Navigating (link, navLink, redirect, useNavigate)](#navigating-link-navlink-redirect-usenavigate)
+    - [Link \& NavLink:](#link--navlink)
+      - [Different way tos use NavLink:](#different-way-tos-use-navlink)
+    - [redirect , UseNavigate and `<Navigate>`:](#redirect--usenavigate-and-navigate)
   - [error handling in react router:](#error-handling-in-react-router)
   - [Different way to load data in react router:](#different-way-to-load-data-in-react-router)
   - [Dynamic Routes:](#dynamic-routes)
@@ -2615,7 +2617,10 @@ export default function Root() {
 }
 ```
 
-## Link & NavLink: 
+
+## Navigating (link, navLink, redirect, useNavigate)
+
+### Link & NavLink: 
 
 `<Link>` is used to navigate between pages without reloading the browser — unlike a regular `<a>` tag.
 It changes the URL client-side and lets React Router render the new route.
@@ -2754,7 +2759,7 @@ export default Blogs;
 ```
 
 
-### Different way tos use NavLink:
+#### Different way tos use NavLink:
 
 - With Destructuring and inline css:
 
@@ -2845,6 +2850,371 @@ a{
 </NavLink>
 ```
 
+### redirect , UseNavigate and `<Navigate>`:
+
+**redirect():** immediately navigates the user to a new route before rendering the component.
+
+It’s typically used :
+- when user is not authorized, redirect to /login
+- after submitting a form, redirect to another page
+
+**useNavigate():** gives you a function to navigate programmatically after the component has rendered (like using window.location but SPA-friendly).
+
+It's typically used: 
+- used with events: button clicks, form submissions, etc.
+
+`<Navigate>` Component: is used inside JSX to declaratively redirect during the component is rendering, often based on state, props, or conditional logic.
+
+It's typically used: 
+- Conditional Redirects Based on State or Props
+
+
+Key Difference: 
+- redirect: works before component render
+- useNavigate: works after component render
+- `<Navigate>`: works during component render
+
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client';
+import './index.css'
+
+// Import React Router dependencies
+import { createBrowserRouter, redirect, RouterProvider } from 'react-router';
+
+// import components
+import Root from './Root';
+import Home from './Home';
+import Login from './Login';
+import Dashboard from './Dashboard';
+import NavigateExample from './NavigateExample';
+import SignUp from './SignUp';
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    errorElement: <h1>Page Not Found</h1>,
+    children: [
+      {
+        index: true,
+        Component: Home,
+      },
+      {
+        path: 'signup',
+        Component: SignUp
+      },
+      {
+        path: 'login',
+        Component: Login,
+      },
+      {
+        path: 'dashboard',
+        loader: () => {
+          const isLoggedIn = localStorage.getItem("loggedIn");
+
+          if (!isLoggedIn) {
+            return redirect('/login');
+          }
+        },
+        Component: Dashboard,
+      },
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+// Root.jsx
+import { Outlet, NavLink, useNavigate } from "react-router";
+
+const Root = () => {
+    const navigate = useNavigate();
+
+    const handleBack = () => navigate(-1);   // Go one step back
+    const handleForward = () => navigate(1); // Go one step forward
+
+    return (
+        <div>
+            <nav className="flex justify-center items-center gap-6 py-4 bg-gray-200">
+                {/* Back & Forward Buttons */}
+                <button
+                    onClick={handleBack}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                >
+                    ← Back
+                </button>
+
+                <button
+                    onClick={handleForward}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
+                >
+                    Forward →
+                </button>
+
+                {/* Navigation Links */}
+                <NavLink
+                    to="/"
+                    className={({ isActive }) =>
+                        isActive ? "text-blue-600 font-bold" : "text-gray-700"
+                    }
+                >
+                    Home
+                </NavLink>
+                <NavLink
+                    to="/login"
+                    className={({ isActive }) =>
+                        isActive ? "text-blue-600 font-bold" : "text-gray-700"
+                    }
+                >
+                    Login
+                </NavLink>
+                <NavLink
+                    to="/signup"
+                    className={({ isActive }) =>
+                        isActive ? "text-blue-600 font-bold" : "text-gray-700"
+                    }
+                >
+                    Sign Up
+                </NavLink>
+                <NavLink
+                    to="/dashboard"
+                    className={({ isActive }) =>
+                        isActive ? "text-blue-600 font-bold" : "text-gray-700"
+                    }
+                >
+                    Dashboard
+                </NavLink>
+            </nav>
+
+            {/* Nested Routes Render Here */}
+            <div className="p-6">
+                <Outlet />
+            </div>
+        </div>
+    );
+};
+
+export default Root;
+```
+
+```jsx
+// Home.jsx
+import React from 'react';
+import { Navigate, useNavigate } from 'react-router';
+
+const Home = () => {
+
+    const navigate = useNavigate();
+
+    const goToLogin = () => {
+        navigate("/login");
+    }
+
+    return (
+        <div className="text-center">
+            <h1 className="text-3xl font-semibold mb-4 text-gray-800">
+                Welcome to Our App
+            </h1>
+            <p className="text-gray-600 mb-4">
+                Click below to go to the login page.
+            </p>
+            <button
+                onClick={goToLogin}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            >
+                Go to Login
+            </button>
+        </div>
+    );
+};
+
+export default Home;
+```
+
+```jsx
+// Login.jsx
+import { useState } from "react";
+import { useNavigate } from "react-router";
+
+const Login = () => {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    function handleLogin(e) {
+        e.preventDefault();
+
+        // Check if user has signed up first
+        const signedUp = localStorage.getItem("signedUp");
+        if (!signedUp) {
+            setError("You need to sign up first!");
+            return;
+        }
+
+        // Check credentials
+        const savedEmail = localStorage.getItem("userEmail");
+        const savedPassword = localStorage.getItem("userPassword");
+
+        if (email === savedEmail && password === savedPassword) {
+            localStorage.setItem("loggedIn", "true");
+            navigate("/dashboard");
+        } else {
+            setError("Invalid email or password");
+        }
+    }
+
+    return (
+        <div className="max-w-md mx-auto bg-white shadow-md rounded p-6 mt-10">
+            <h2 className="text-2xl font-semibold mb-4 text-center">Login</h2>
+
+            <form onSubmit={handleLogin} className="flex flex-col gap-3">
+                <input
+                    type="email"
+                    placeholder="Email"
+                    className="border p-2 rounded"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="password"
+                    className="border p-2 rounded"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <button
+                    type="submit"
+                    className="bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+                >
+                    Login
+                </button>
+            </form>
+
+            {error && <p className="text-red-500 text-center mt-3">{error}</p>}
+        </div>
+    );
+};
+
+export default Login;
+```
+
+```jsx
+// SignUp.jsx
+import React, { useState } from "react";
+import { useNavigate, Navigate } from "react-router";
+
+const SignUp = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    // Check if user already signed up
+    const isSignedUp = localStorage.getItem("signedUp");
+    if (isSignedUp) {
+        return <Navigate to="/login" />; // Redirect to login if already signed up
+    }
+
+    const handleSignUp = (e) => {
+        e.preventDefault();
+
+        if (!email || !password) {
+            setError("Please fill all fields");
+            return;
+        }
+
+        // Save user credentials in localStorage (fake authentication)
+        localStorage.setItem("signedUp", "true");
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("userPassword", password);
+
+        navigate("/login"); // Go to login page after signup
+    };
+
+    return (
+        <div className="max-w-md mx-auto bg-white shadow-md rounded p-6 mt-10">
+            <h2 className="text-2xl font-semibold mb-4 text-center">Sign Up</h2>
+
+            <form onSubmit={handleSignUp} className="flex flex-col gap-3">
+                <input
+                    type="email"
+                    placeholder="Email"
+                    className="border p-2 rounded"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    className="border p-2 rounded"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <button
+                    type="submit"
+                    className="bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+                >
+                    Sign Up
+                </button>
+            </form>
+
+            {error && <p className="text-red-500 text-center mt-3">{error}</p>}
+        </div>
+    );
+};
+
+export default SignUp;
+```
+
+```jsx
+// Dashboard.jsx
+import React from 'react';
+import { useNavigate } from 'react-router';
+
+const Dashboard = () => {
+    const navigate = useNavigate();
+
+    console.log(navigate)
+
+    function handleLogout() {
+        localStorage.removeItem("loggedIn");
+        navigate("/login");
+    }
+
+    return (
+        <div className="text-center">
+            <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
+            <p className="text-gray-600 mb-4">
+                Welcome, you are logged in successfully!
+            </p>
+            <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+            >
+                Logout
+            </button>
+        </div>
+    );
+};
+
+export default Dashboard;
+```
 
 ## error handling in react router: 
 
