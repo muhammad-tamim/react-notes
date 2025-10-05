@@ -47,6 +47,7 @@
   - [Link \& NavLink:](#link--navlink)
     - [Different way tos use NavLink:](#different-way-tos-use-navlink)
   - [error handling in react router:](#error-handling-in-react-router)
+  - [Different way to load data in react router:](#different-way-to-load-data-in-react-router)
 
 ---
 
@@ -2909,3 +2910,233 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 ```
+
+## Different way to load data in react router: 
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+
+// Import React Router dependencies
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+// Import components
+import Root from './components/Root';
+import Posts from './components/Posts';
+
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    errorElement: <h1>Page not found</h1>,
+    children: [
+      {
+        path: '/',
+        Component: Posts
+      }
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+// Root.jsx
+import React from 'react';
+import { Link, NavLink, Outlet } from 'react-router';
+
+const Root = () => {
+    return (
+        <div>
+            <h1>Different way to load data in react router:</h1>
+
+            {/* Child routes will appear here */}
+            <Outlet />
+        </div>
+    );
+};
+
+export default Root;
+```
+
+
+- Method 1: Using useEffect + useState (Classic Way): 
+Simple and familiar but Fetch happens after the component render, possible flicker/loading delay
+
+```jsx
+// Posts.jsx
+import { useEffect, useState } from "react";
+
+const Posts = () => {
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        fetch("https://jsonplaceholder.typicode.com/posts")
+            .then((res) => res.json())
+            .then((data) => setPosts(data))
+            .catch((err) => console.error(err));
+    }, []);
+
+    return (
+        <div>
+            <h2>All Posts (useEffect)</h2>
+            {posts.map((post) => (
+                <div key={post.id}>
+                    <h4>{post.title}</h4>
+                    <p>{post.body}</p>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default Posts;
+```
+
+- methods 2: Suspense + use:
+
+Suspense works during the component’s initial rendering time. It pauses rendering until the Promise (data fetch) resolves, and shows a fallback (like a loading spinner) during that time.
+
+
+```jsx
+// main.jsx
+import { StrictMode, Suspense } from 'react'
+import { createRoot } from 'react-dom/client'
+
+// Import React Router dependencies
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+// Import components
+import Root from './components/Root';
+import Home from './components/Home';
+import Posts from './components/Posts';
+
+
+const postPromise = fetch("https://jsonplaceholder.typicode.com/posts")
+  .then(res => res.json())
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    errorElement: <h1>Page not found</h1>,
+    children: [
+      {
+        path: '/',
+        element: <Suspense fallback={<h1>Loading...........</h1>}>
+          <Posts postPromise={postPromise}></Posts>
+        </Suspense>
+      }
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+import { use } from "react";
+
+const Posts = ({ postPromise }) => {
+    const posts = use(postPromise)
+
+    return (
+        <div>
+            <h2>All Posts (loader)</h2>
+            {posts.slice(0, 5).map((post) => (
+                <div key={post.id}>
+                    <h4>{post.title}</h4>
+                    <p>{post.body}</p>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default Posts;
+```
+
+- Method 3: Using loader and useLoaderData:
+
+React Router’s loader API lets you load data before rendering a route. This means your UI can render immediately with the fetched data — no extra loading flicker.
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+
+// Import React Router dependencies
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+
+// Import components
+import Root from './components/Root';
+import Home from './components/Home';
+import Posts from './components/Posts';
+
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    errorElement: <h1>Page not found</h1>,
+    children: [
+      {
+        path: '/',
+        loader: () => fetch("https://jsonplaceholder.typicode.com/posts"),
+        hydrateFallbackElement: <p>Loading posts...</p>,
+        Component: Posts
+      }
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+import { useLoaderData } from "react-router";
+
+const Posts = () => {
+    const posts = useLoaderData(); // Access loader data inside components
+
+    return (
+        <div>
+            <h2>All Posts (loader)</h2>
+            {posts.slice(0, 5).map((post) => (
+                <div key={post.id}>
+                    <h4>{post.title}</h4>
+                    <p>{post.body}</p>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default Posts;
+```
+
+So in short:
+
+- useEffect → fetches data after render.
+- Suspense + use() → fetches data during render.
+- loader + useLoaderData → fetches data before render.
