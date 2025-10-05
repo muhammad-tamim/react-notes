@@ -45,7 +45,7 @@
   - [Nested Routing:](#nested-routing)
     - [Difference between children props in react \&  Outlet component in react router:](#difference-between-children-props-in-react---outlet-component-in-react-router)
   - [Link \& NavLink:](#link--navlink)
-    - [isActive property on navLink:](#isactive-property-on-navlink)
+    - [Different way tos use NavLink:](#different-way-tos-use-navlink)
   - [error handling in react router:](#error-handling-in-react-router)
 
 ---
@@ -2751,18 +2751,10 @@ const Blogs = () => {
 export default Blogs;
 ```
 
-### isActive property on navLink: 
 
-In React Router, if you pass a function to the style or className prop, it will automatically receive an object called: 
+### Different way tos use NavLink:
 
-```jsx
-{ isActive: true }  // when the link matches the current URL
-{ isActive: false } // when it does not
-```
-so, we can use this isActive object property value to dynamically styles active navbar menus.
-
-
-Here we destructure the isActive property directly from the object:
+- With Destructuring and inline css:
 
 ```jsx
 <NavLink
@@ -2776,7 +2768,7 @@ Here we destructure the isActive property directly from the object:
 </NavLink>
 ```
 
-without destructuring:
+- without destructuring and inline css:
 
 ```jsx
 <NavLink
@@ -2790,7 +2782,53 @@ without destructuring:
 </NavLink>
 ```
 
-with className: 
+- with destructuring and external css:
+
+```jsx
+<NavLink
+  to="/blogs"
+className={({ isActive }) => 
+    isActive ? "active" : "in-active"}
+>
+  Blogs
+</NavLink>
+```
+
+```css
+.active {
+  color: orange;
+  font-weight: bold;
+}
+
+.in-active{
+color: black;
+font-weight: normal;
+}
+```
+
+- without a function:
+
+You don't need to write a function, navLink automatically reacive isActive property behind the scens: 
+
+```jsx
+<NavLink to="/blogs">
+  Blogs
+</NavLink>
+```
+
+```css
+a.active {
+  color: orange;
+  font-weight: bold;
+}
+
+a{
+  color: black;
+  font-weight: normal;
+}
+```
+
+- with className: 
 
 ```jsx
 <NavLink
