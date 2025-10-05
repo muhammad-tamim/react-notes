@@ -51,6 +51,7 @@
   - [error handling in react router:](#error-handling-in-react-router)
   - [Different way to load data in react router:](#different-way-to-load-data-in-react-router)
   - [Dynamic Routes:](#dynamic-routes)
+  - [action api and `<Form>`:](#action-api-and-form)
 
 ---
 
@@ -3718,3 +3719,279 @@ so if we destructure only params, we get the actual dynamic values directly:
 ```
 
 - useParams(): Is a React Router hook that lets you read the dynamic part of the URL directly from the browser’s address bar.
+
+## action api and `<Form>`: 
+In React Router Data API, the action function with `<Form>` component handles form submissions (like POST, PUT, DELETE). When you use `<Form method="post">`, React Router automatically sends the form data to the route’s action function, where you can access it using `await request.formData()`.
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client';
+import './index.css'
+
+// Import React Router dependencies
+import { createBrowserRouter, RouterProvider } from 'react-router';
+
+// import components
+import Root from './Root';
+import Home from './Home';
+import AddUserAction from './AddUserAction';
+import AddUserManual from './AddUserManual';
+import action from './action';
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    errorElement: <h1>Page Not Found</h1>,
+    children: [
+      {
+        index: true,
+        Component: Home,
+      },
+      {
+        path: "add-user-action",
+        action: action,
+        Component: AddUserAction,
+      },
+      {
+        path: "add-user-manual",
+        Component: AddUserManual,
+      },
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+// Root.jsx
+import { Outlet, Link } from "react-router";
+
+const Root = () => {
+    return (
+        <div className="p-6">
+            <h1 className="text-2xl font-bold text-center mb-4">User Management</h1>
+
+            <nav className="flex justify-center gap-4 mb-6">
+                <Link className="text-blue-600 hover:underline" to="/">Home</Link>
+                <Link className="text-blue-600 hover:underline" to="/add-user-action">
+                    Add User (Action)
+                </Link>
+                <Link className="text-blue-600 hover:underline" to="/add-user-manual">
+                    Add User (Manual)
+                </Link>
+            </nav>
+
+            <Outlet />
+        </div>
+    );
+};
+
+export default Root;
+```
+
+```jsx
+// Home.jsx
+import { useEffect, useState } from "react";
+
+
+const Home = () => {
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        const saved = JSON.parse(localStorage.getItem("users")) || [];
+        setUsers(saved);
+    }, []);
+
+    return (
+        <div className="max-w-md mx-auto">
+            <h2 className="text-xl font-semibold mb-3">All Users</h2>
+
+            {users.length === 0 ? (
+                <p>No users found. Add one!</p>
+            ) : (
+                <ul className="space-y-2">
+                    {users.map((u, i) => (
+                        <li key={i} className="border p-3 rounded">
+                            <p><strong>Name:</strong> {u.name}</p>
+                            <p><strong>Email:</strong> {u.email}</p>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+};
+
+export default Home;
+```
+
+```js
+// action.js
+import { redirect } from "react-router";
+
+const action = async ({ request }) => {
+
+    const formData = await request.formData();
+
+    console.log(request) // Request {method: 'POST', url: 'http://localhost:5173/add-user-action', headers: Headers, destination: '', referrer: 'about:client', …}
+    console.log(formData) // FormData {}
+    console.log("name", formData.get("name")) // name: Angela Sanchez
+
+    const newUser = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+    };
+
+    // Save to localStorage
+    const existing = JSON.parse(localStorage.getItem("users")) || [];
+    existing.push(newUser);
+    localStorage.setItem("users", JSON.stringify(existing));
+
+    // Redirect to home
+    // return redirect("/");
+    return newUser
+}
+
+export default action;
+```
+
+Note: action function MUST be declared as `async` and use `await request.formData()` because:
+- The `request.formData()` method returns a Promise (it takes time to read the form data from the HTTP request).
+- If you don’t use `await`, `formData` will be a pending Promise — not the actual form values.
+- As a result, `formData.get("name")` and `formData.get("email")` would fail or return `undefined`.
+
+
+```jsx
+// AddUserAction.jsx
+import React from 'react';
+import { Form, useActionData } from 'react-router';
+
+const AddUserAction = () => {
+
+    const data = useActionData() // Access returned data from action()
+    console.log(data)
+
+    return (
+        <div className="max-w-md mx-auto">
+            <h2 className="text-xl font-semibold mb-4">Add User (Using Action)</h2>
+
+            {/* ✅ This Form automatically calls the `action` in the router */}
+            <Form method="post" className="space-y-4">
+                <div>
+                    <label className="block mb-1 font-medium">Name:</label>
+                    <input
+                        type="text"
+                        name="name"
+                        required
+                        className="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <div>
+                    <label className="block mb-1 font-medium">Email:</label>
+                    <input
+                        type="email"
+                        name="email"
+                        required
+                        className="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                    Submit
+                </button>
+            </Form>
+
+            {/* ✅ Show result using useActionData */}
+            {data && (
+                <div className="mt-4 p-3 border rounded bg-green-50">
+                    <p className="font-semibold text-green-700">✅ User Added Successfully!</p>
+                    <p><strong>Name:</strong> {data.name}</p>
+                    <p><strong>Email:</strong> {data.email}</p>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default AddUserAction;
+```
+
+```jsx
+// addUserManual.jsx
+import { useState } from "react";
+import { useNavigate } from "react-router";
+
+
+const AddUserManual = () => {
+
+    const navigate = useNavigate();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+
+    function handleSubmit(e) {
+        e.preventDefault();
+
+        const newUser = { name, email };
+        const existing = JSON.parse(localStorage.getItem("users")) || [];
+        existing.push(newUser);
+        localStorage.setItem("users", JSON.stringify(existing));
+
+        navigate("/"); // manually redirect
+    }
+
+    return (
+        <div className="max-w-md mx-auto">
+            <h2 className="text-xl font-semibold mb-4">Add User (Manual Submit)</h2>
+
+            {/* 🧠 Normal form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <label className="block mb-1 font-medium">Name:</label>
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        className="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <div>
+                    <label className="block mb-1 font-medium">Email:</label>
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="border p-2 w-full rounded"
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                >
+                    Submit
+                </button>
+            </form>
+        </div>
+    );
+};
+
+export default AddUserManual;
+```
+
+
+
