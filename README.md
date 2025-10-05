@@ -48,6 +48,7 @@
     - [Different way tos use NavLink:](#different-way-tos-use-navlink)
   - [error handling in react router:](#error-handling-in-react-router)
   - [Different way to load data in react router:](#different-way-to-load-data-in-react-router)
+  - [Dynamic Routes:](#dynamic-routes)
 
 ---
 
@@ -2356,11 +2357,11 @@ export default Message;
 ```jsx
 // main.jsx
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client';
+import './index.css'
 
 // Import React Router dependencies
-import { createBrowserRouter } from 'react-router';
-import { RouterProvider } from 'react-router/dom';
+import { createBrowserRouter, RouterProvider } from 'react-router';
 
 
 const router = createBrowserRouter([
@@ -3140,3 +3141,210 @@ So in short:
 - useEffect → fetches data after render.
 - Suspense + use() → fetches data during render.
 - loader + useLoaderData → fetches data before render.
+
+## Dynamic Routes:
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client';
+import './index.css'
+
+// Import React Router dependencies
+import { createBrowserRouter, RouterProvider } from 'react-router';
+
+// import components
+import Root from './Root';
+import Home from './Home';
+import Users from './Users';
+import UserDetails from './UserDetails';
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    errorElement: <h1>Page Not Found</h1>,
+    children: [
+      {
+        index: true,
+        // path: '/',
+        Component: Home,
+      },
+      {
+        path: 'users',
+        Component: Users,
+        loader: () => fetch("https://jsonplaceholder.typicode.com/users"),
+        hydrateFallbackElement: <h1>Loading............</h1>
+      },
+      {
+        path: 'users/:id',
+        Component: UserDetails,
+        loader: ({ params }) => fetch(`https://jsonplaceholder.typicode.com/users/${params.id}`),
+        hydrateFallbackElement: <h1>Loading............</h1>
+      }
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+import React from 'react';
+import { NavLink, Outlet } from 'react-router';
+
+const Root = () => {
+    return (
+        <div className="min-h-screen bg-gray-50">
+            <nav className="flex gap-6 bg-white shadow p-4">
+                <NavLink
+                    to="/"
+                    className={({ isActive }) =>
+                        isActive ? "text-blue-600 font-semibold" : "text-gray-700"
+                    }
+                >
+                    Home
+                </NavLink>
+                <NavLink
+                    to="/users"
+                    className={({ isActive }) =>
+                        isActive ? "text-blue-600 font-semibold" : "text-gray-700"
+                    }
+                >
+                    Users
+                </NavLink>
+            </nav>
+
+            <main className="p-6 max-w-4xl mx-auto">
+                <Outlet /> {/* renders child routes */}
+            </main>
+        </div>
+    );
+};
+
+export default Root;
+```
+
+```jsx
+// pages/Home.jsx
+const Home = () => {
+    return (
+        <div className="text-center">
+            <h1 className="text-3xl font-bold text-blue-600 mb-4">Welcome!</h1>
+            <p className="text-gray-600">
+                Explore dynamic routing with React Router v7.
+            </p>
+        </div>
+    );
+};
+
+export default Home;
+```
+
+```jsx
+// pages/Users.jsx
+import { useLoaderData, Link } from "react-router";
+
+const Users = () => {
+    const users = useLoaderData();
+
+    return (
+        <div>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+                User List
+            </h2>
+            <ul className="grid gap-4">
+                {users.map((user) => (
+                    <li
+                        key={user.id}
+                        className="bg-white p-4 shadow rounded-lg hover:shadow-md transition"
+                    >
+                        <h3 className="font-semibold text-lg">{user.name}</h3>
+                        <p className="text-gray-500">{user.email}</p>
+                        <Link
+                            to={`/users/${user.id}`}
+                            // to={`${user.id}`}
+
+                            className="text-blue-500 hover:underline"
+                        >
+                            View Details
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Users;
+```
+
+```jsx
+// pages/UserDetails.jsx
+import { useParams, useLoaderData, Link } from "react-router";
+
+const UserDetails = () => {
+    const { id } = useParams();
+    const user = useLoaderData();
+
+    return (
+        <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                User Details (ID: {id})
+            </h2>
+            <p><strong>Name:</strong> {user.name}</p>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Phone:</strong> {user.phone}</p>
+            <p><strong>Website:</strong> {user.website}</p>
+
+            <Link
+                to="/users"
+                className="inline-block mt-4 text-blue-500 hover:underline"
+            >
+                Back to Users
+            </Link>
+        </div>
+    );
+};
+
+export default UserDetails;
+```
+
+here, 
+
+- ({ params }) => fetch(...): When you define a dynamic route like /users/:DynamicRoute, React Router automatically provides that dynamic part inside an object called params, which it extracts from the URL.
+
+Inside the function parameter, React Router passes a single argument — an object that looks like this:
+
+```jsx
+      {
+        path: 'users/:id',
+        Component: UserDetails,
+        loader: (params) => { 
+          console.log(params) // {request: Request, params: {…}, context: RouterContextProvider}
+          return fetch(`https://jsonplaceholder.typicode.com/users/${params.id}`)
+        },
+        hydrateFallbackElement: <h1>Loading............</h1>
+      }
+```
+
+so if we destructure only params, we get the actual dynamic values directly:
+
+```jsx
+      {
+        path: 'users/:id',
+        Component: UserDetails,
+        loader: ({params}) => { 
+          console.log(params) // {id: '1'}
+          return fetch(`https://jsonplaceholder.typicode.com/users/${params.id}`)
+        },
+        hydrateFallbackElement: <h1>Loading............</h1>
+      }
+```
+
+- useParams(): Is a React Router hook that lets you read the dynamic part of the URL directly from the browser’s address bar.
