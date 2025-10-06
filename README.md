@@ -52,6 +52,7 @@
   - [Different way to load data in react router:](#different-way-to-load-data-in-react-router)
   - [Dynamic Routes:](#dynamic-routes)
   - [action api and `<Form>`:](#action-api-and-form)
+  - [Pending UI:](#pending-ui)
 
 ---
 
@@ -3993,5 +3994,282 @@ const AddUserManual = () => {
 export default AddUserManual;
 ```
 
+## Pending UI:
+we can show loading states in 5 ways:
+- useNavigation()
+- `<NavLink>` with isPending
+- HydraFallbackElement
+- Suspense
+- useState 
+
+```jsx
+// main.jsx
+import { StrictMode, Suspense } from 'react'
+import { createRoot } from 'react-dom/client';
+import './index.css'
+
+import { createBrowserRouter, RouterProvider } from 'react-router';
+import Root from './Root';
+import Home from './Home';
+import Users from './Users';
+import Posts from './Posts';
+import UserDetails from './UserDetails';
+
+// fetchData for Suspense outside router
+export const fetchData = fetch("https://jsonplaceholder.typicode.com/posts").then(res => res.json())
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Root,
+    errorElement: <h1>Page Not Found</h1>,
+    children: [
+      { index: true, Component: Home },
+      {
+        path: 'users',
+        Component: Users,
+        loader: () => fetch("https://jsonplaceholder.typicode.com/users"),
+        hydrateFallbackElement: <div className="flex justify-center">
+          <span className="loading loading-spinner size-40"></span>
+        </div>
+      },
+      {
+        path: 'users/:id',
+        Component: UserDetails
+      },
+      {
+        path: 'posts',
+        element: (
+          <Suspense fallback={<div className="flex justify-center">
+            <span className="loading loading-dots size-40"></span>
+          </div>}>
+            <Posts fetchData={fetchData} />
+          </Suspense>
+        )
+      },
+    ]
+  },
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+// Root.jsx
+import React from "react";
+import { NavLink, Outlet, useNavigation } from "react-router";
+
+const Root = () => {
+    // 🌀 Detect global navigation state
+    const navigation = useNavigation();
+
+    // It can be: "idle" | "submitting" | "loading"
+    // const isGlobalLoading = navigation.state === "loading";
+    const isGlobalLoading = Boolean(navigation.location);
 
 
+    return (
+        <div className="min-h-screen bg-gray-50 relative">
+            {/* 🔵 Global Loading Spinner (top bar overlay) */}
+            {isGlobalLoading && (
+                <div className="flex justify-center">
+                    <span className="loading loading-ring size-40"></span>
+                </div>
+            )}
+
+            {/* 🧭 Navigation Bar */}
+            <nav className="flex justify-center gap-6 bg-white shadow p-4 mt-12">
+                {/* Home Link */}
+                <NavLink to="/">
+                    {({ isActive, isPending }) => (
+                        <span
+                            className={`
+                flex items-center gap-2 px-3 py-2 rounded transition
+                ${isActive ? "text-blue-600 font-semibold" : "text-gray-700"}
+                ${isPending ? "text-yellow-500" : ""}
+              `}
+                        >
+                            {isPending && (
+                                <span className="loading loading-spinner loading-sm"></span>
+                            )}
+                            {isPending ? "Loading..." : "Home"}
+                        </span>
+                    )}
+                </NavLink>
+
+                {/* Users Link */}
+                <NavLink to="/users">
+                    {({ isActive, isPending }) => (
+                        <span
+                            className={`
+                flex items-center gap-2 px-3 py-2 rounded transition
+                ${isActive ? "text-blue-600 font-semibold" : "text-gray-700"}
+                ${isPending ? "text-yellow-500" : ""}
+              `}
+                        >
+                            {isPending && (
+                                <span className="loading loading-spinner loading-sm"></span>
+                            )}
+                            {isPending ? "Loading..." : "Users"}
+                        </span>
+                    )}
+                </NavLink>
+
+                {/* Posts Link */}
+                <NavLink to="/posts">
+                    {({ isActive, isPending }) => (
+                        <span
+                            className={`
+                flex items-center gap-2 px-3 py-2 rounded transition
+                ${isActive ? "text-blue-600 font-semibold" : "text-gray-700"}
+                ${isPending ? "text-yellow-500" : ""}
+              `}
+                        >
+                            {isPending && (
+                                <span className="loading loading-spinner loading-sm"></span>
+                            )}
+                            {isPending ? "Loading..." : "Posts"}
+                        </span>
+                    )}
+                </NavLink>
+            </nav>
+
+            {/* 🧩 Child Routes */}
+            <main className="p-6 max-w-4xl mx-auto">
+                <Outlet />
+            </main>
+        </div>
+    );
+};
+
+export default Root;
+```
+
+```jsx
+// Home.jsx
+import React from 'react';
+
+const Home = () => {
+    return (
+        <div className="text-center">
+            <h1 className="text-3xl font-bold text-blue-600 mb-4">Welcome!</h1>
+            <p className="text-gray-600">
+                Explore pending ui.
+            </p>
+        </div>
+    );
+};
+
+export default Home;
+```
+
+```jsx
+// Users.jsx
+import { useLoaderData, Link } from "react-router";
+
+const Users = () => {
+    const users = useLoaderData();
+
+    return (
+        <div>
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+                User List
+            </h2>
+            <ul className="grid gap-4">
+                {users.map((user) => (
+                    <li
+                        key={user.id}
+                        className="bg-white p-4 shadow rounded-lg hover:shadow-md transition"
+                    >
+                        <h3 className="font-semibold text-lg">{user.name}</h3>
+                        <p className="text-gray-500">{user.email}</p>
+                        <Link
+                            to={`/users/${user.id}`}
+                            // to={`${user.id}`}
+
+                            className="text-blue-500 hover:underline"
+                        >
+                            View Details
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Users;
+```
+
+```jsx
+// UserDetails.jsx
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router";
+
+const UserDetails = () => {
+    const { id } = useParams();
+    const [user, setUser] = useState({})
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetch(`https://jsonplaceholder.typicode.com/users/${id}`)
+            .then(res => res.json())
+            .then(data => setUser(data))
+            .finally(() => setLoading(false))
+    }, [id])
+
+    if (loading) {
+        return <div className="flex justify-center">
+            <span className="loading loading-infinity size-40"></span>
+        </div>
+    }
+    return (
+        <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                User Details (ID: {id})
+            </h2>
+            <p><strong>Name:</strong> {user.name}</p>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Phone:</strong> {user.phone}</p>
+            <p><strong>Website:</strong> {user.website}</p>
+
+            <Link
+                to="/users"
+                className="inline-block mt-4 text-blue-500 hover:underline"
+            >
+                Back to Users
+            </Link>
+        </div>
+    );
+};
+
+export default UserDetails;
+```
+
+```jsx
+// Post.jsx
+import React, { use } from 'react';
+
+const Posts = ({ fetchData }) => {
+    const posts = use(fetchData)
+    console.log(posts)
+    return (
+        <div className="p-4">
+            <h2 className="text-2xl font-semibold mb-4">Posts (Suspense Example)</h2>
+            <ul className="space-y-2">
+                {posts.slice(0, 50).map(post => (
+                    <li key={post.id} className="p-3 border rounded hover:bg-gray-50 transition">
+                        {post.title}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Posts;
+```
