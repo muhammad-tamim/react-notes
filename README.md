@@ -43,6 +43,7 @@
   - [Forms](#forms)
     - [Controlled Component:](#controlled-component)
     - [Un-controlled Component:](#un-controlled-component)
+  - [Custom hook:](#custom-hook)
 - [part 2: React Router:](#part-2-react-router)
   - [Getting started to React Routing:](#getting-started-to-react-routing)
   - [Nested Routing:](#nested-routing)
@@ -2571,6 +2572,69 @@ const Success = () => {
 };
 
 export default Success;
+```
+
+## Custom hook:
+A custom hook is a JavaScript function whose name starts with use and can call other hooks inside it.
+
+Note: Normal functions can do any JS work: math, formatting, calculations, etc.
+
+```jsx
+function add(a, b) {
+  return a + b;
+}
+
+export default add;
+```
+You can call this function anywhere and anyplace but it can’t use React features like useState, useEffect, useContext, etc because React Hooks only work inside React components or custom hooks.
+
+
+**Rules of Hooks:**
+- Hooks can call others hooks
+- Hooks only call react functional component
+- Hooks must call top level of component
+- Hooks can't call inside the loops, conditional statement or any nested function 
+
+```jsx
+import React from 'react';
+import useFetch from './components/UseFetch';
+
+const App = () => {
+  const { data, loading, error } = useFetch("https://jsonplaceholder.typicode.com/users");
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  return (
+    <ul>
+      {data.map(user => <li key={user.id}>{user.name}</li>)}
+    </ul>
+  );
+};
+
+export default App;
+```
+
+```jsx
+import { useState, useEffect } from "react";
+
+function useFetch(url) {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetch(url)
+            .then(res => res.json())
+            .then((data) => setData(data))
+            .catch((err) => setError(err.message))
+            .finally(() => setLoading(false));
+    }, [url]);
+
+    return { data, loading, error };
+}
+
+export default useFetch;
 ```
 
 # part 2: React Router:
