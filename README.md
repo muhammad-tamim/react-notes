@@ -40,6 +40,9 @@
       - [Re-render:](#re-render)
     - [Step 2: React Renders Your Components](#step-2-react-renders-your-components)
     - [Step 3: React Commits Changes to the DOM](#step-3-react-commits-changes-to-the-dom)
+  - [Forms](#forms)
+    - [Controlled Component:](#controlled-component)
+    - [Un-controlled Component:](#un-controlled-component)
 - [part 2: React Router:](#part-2-react-router)
   - [Getting started to React Routing:](#getting-started-to-react-routing)
   - [Nested Routing:](#nested-routing)
@@ -2353,6 +2356,222 @@ export default Message;
 
 ---
 
+## Forms
+### Controlled Component: 
+A form element whose value is controlled by React state using value and onChange. React manages and updates the input data.
+
+```jsx
+import React, { useState } from 'react';
+
+const ControlComponent = () => {
+    const [name, setName] = useState("");
+    const [message, setMessage] = useState("");
+
+    const handleSubmit = (e) => {
+        e.preventDefault(); // prevent page reload
+        console.log("Form data:", { name, message });
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                className='input'
+            />
+            <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Your message"
+                className='textarea'
+            />
+            <button type="submit" className='btn'>Submit</button>
+            {/* <input type="button" value="Submit" className='btn'/> */}
+        </form>
+    );
+};
+
+export default ControlComponent;
+```
+
+### Un-controlled Component: 
+A form element whose value is not controlled by React state — it manages its own internal state, usually using useRef, react router `<Form>` + action() or other form libraries (React Hook Form, Formik etc).
+
+**With useRef:**
+
+```jsx
+import React, { useRef } from 'react';
+
+const UnControlComponentRef = () => {
+
+    const nameRef = useRef();
+    const emailRef = useRef();
+    const textRef = useRef();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const name = nameRef.current.value;
+        const email = nameRef.current.value;
+        const text = nameRef.current.value;
+
+        console.log("Form data:", { name, email, text });
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input ref={nameRef} name="name" defaultValue="Tamim" className="input" />
+            <input ref={emailRef} name="email" placeholder='email' className="input" />
+            <textarea ref={textRef} name="feedback" placeholder="Your feedback" className="input" />
+            <button type="submit" className="btn">Send Feedback</button>
+        </form>
+    );
+};
+
+export default UnControlComponentRef;
+```
+
+```jsx
+import { useRef } from "react";
+
+const FeedbackForm = () => {
+  const formRef = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(formRef.current);
+    const data = Object.fromEntries(formData.entries());
+    console.log("Form data:", data);
+  };
+
+  return (
+    <form ref={formRef} onSubmit={handleSubmit} className="p-4 space-y-2">
+      <input name="email" placeholder="Email" className="border p-2 rounded" />
+      <textarea name="feedback" placeholder="Your feedback" className="border p-2 rounded" />
+      <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
+        Send Feedback
+      </button>
+    </form>
+  );
+};
+
+export default FeedbackForm;
+```
+
+**With `<Form>` + action()**
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client';
+import './index.css'
+
+// Import React Router dependencies
+import { createBrowserRouter, RouterProvider } from 'react-router';
+
+// import components
+import App from './App';
+import feedbackAction from './components/feedbackAction';
+import Success from './components/Success';
+
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: App,
+    action: feedbackAction,
+  },
+  {
+    path: "/success",
+    element: <Success />,
+  },
+
+])
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <RouterProvider router={router}></RouterProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+import { redirect } from "react-router";
+
+const feedbackAction = async ({ request }) => {
+    const formData = await request.formData(); // get form data
+    const data = Object.fromEntries(formData.entries());
+
+    console.log("Submitted feedback:", data);
+    // {name: 'Sade Mullins', email: 'sysagojaw@mailinator.com', feedback: 'Laboris voluptatem '}
+
+    // Redirect to success page after submission
+    return redirect("/success");
+    // or we can send data 
+    // return data --> and then const data = useActionData()
+};
+
+export default feedbackAction
+```
+
+```jsx
+import React from 'react';
+import { Form } from 'react-router';
+
+
+const App = () => {
+  return (
+    <div className="p-4 max-w-md mx-auto">
+      <h1 className="text-xl font-bold mb-4">Feedback Form</h1>
+
+      {/* React Router uncontrolled form */}
+      <Form method="post" className="space-y-2 border p-4 rounded">
+        <input
+          type="text"
+          name="name"
+          placeholder="Your Name"
+          className="border p-2 rounded w-full"
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Your Email"
+          className="border p-2 rounded w-full"
+        />
+        <textarea
+          name="feedback"
+          placeholder="Your Feedback"
+          className="border p-2 rounded w-full"
+        />
+        <button type="submit" className='btn w-full btn-primary'>Submit</button>
+      </Form>
+    </div>
+  );
+};
+
+export default App;
+```
+
+```jsx
+import React from "react";
+import { Link } from "react-router";
+
+const Success = () => {
+    return (
+        <div className="p-4 max-w-md mx-auto text-center">
+            <h1 className="text-xl font-bold mb-4">Feedback Submitted!</h1>
+            <p className="mb-4">Thank you for your feedback.</p>
+            <Link to="/" className="text-blue-500 underline">
+                Submit another feedback
+            </Link>
+        </div>
+    );
+};
+
+export default Success;
+```
 
 # part 2: React Router:
 
