@@ -1080,6 +1080,282 @@ const App = () => {
 export default App;
 ```
 
+example: 
+
+```jsx
+// Context.js
+import { createContext } from "react";
+
+const Context = createContext()
+
+export default Context;
+```
+
+```jsx
+// UserProvide.jsx
+import React, { useState } from 'react';
+import Context from './Context';
+
+const UserProvider = ({ children }) => {
+    const [user, setUser] = useState({
+        name: "Tamim",
+        email: "tamim@example.com",
+        role: "Frontend Developer",
+    });
+
+    const logout = () => setUser(null);
+
+
+    return (
+        <Context.Provider value={{ user, logout }}>
+            {children}
+        </Context.Provider>
+    );
+};
+
+export default UserProvider;
+```
+
+```jsx
+// App.jsx
+import React from 'react';
+import UserProvider from './components/UserProvider';
+import Layout from './Layout';
+
+const App = () => {
+  return (
+    <div>
+      <UserProvider>
+        <Layout></Layout>
+      </UserProvider>
+    </div>
+  );
+};
+
+export default App;
+```
+
+```jsx
+// Layout.jsx
+import React from 'react';
+import Sidebar from './components/Sidebar';
+
+const Layout = () => {
+    return (
+        <div className="p-4 border-2 border-blue-400 rounded">
+            <h2>Layout Component</h2>
+            <Sidebar />
+        </div>
+
+    );
+};
+
+export default Layout; 
+```
+
+```jsx
+// Sidebar.jsx
+import React from 'react';
+import UserPanel from './UserPanel';
+
+const Sidebar = () => {
+    return (
+        <div className="p-4 border-2 border-green-400 rounded mt-2">
+            <h3>Sidebar Component</h3>
+            <UserPanel />
+        </div>
+    );
+};
+
+export default Sidebar;
+``` 
+
+```jsx
+// UserPanel.jsx
+import React from 'react';
+import UserDetails from './UserDetails';
+
+const UserPanel = () => {
+    return (
+        <div className="p-4 border-2 border-yellow-400 rounded mt-2">
+            <h4>UserPanel Component</h4>
+            <UserDetails />
+        </div>
+    );
+};
+
+export default UserPanel;
+```
+
+```jsx
+// UserDetails.jsx
+import React, { use, useContext } from 'react';
+import Context from './Context';
+
+const UserDetails = () => {
+    // const { user, logout } = useContext(Context); // traditional and most common, Works only for reading Context
+    const { user, logout } = use(Context) // new hook that work with both Reading Context values and Suspense JSON response 
+    if (!user) return <p>User logged out.</p>;
+    return (
+        <div className="p-4 border-2 border-red-400 rounded mt-2">
+            <h5>UserDetails Component</h5>
+            <p><strong>Name:</strong> {user.name}</p>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Role:</strong> {user.role}</p>
+            <button
+                onClick={logout}
+                className="btn btn-error"
+            >
+                Logout
+            </button>
+        </div>
+    );
+};
+
+export default UserDetails;
+```
+
+example 2: 
+
+```jsx
+// Context.js
+import { createContext } from "react";
+
+export const AuthContext = createContext(null);
+export const ThemeContext = createContext(null);
+```
+
+```jsx
+// App.jsx
+import React, { useState } from "react";
+import Layout from "./Layout";
+import { AuthContext, ThemeContext } from "./components/Context";
+
+const App = () => {
+  // Auth state
+  const [user, setUser] = useState({ name: "Tamim", role: "Developer" });
+
+  // Theme state
+  const [theme, setTheme] = useState("light");
+
+  const logout = () => setUser(null);
+  const toggleTheme = () => setTheme((previousValue) => (previousValue === "light" ? "dark" : "light"));
+
+  return (
+    <AuthContext.Provider value={{ user, logout }}>
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <Layout />
+      </ThemeContext.Provider>
+    </AuthContext.Provider>
+  );
+};
+
+export default App;
+```
+
+```jsx
+// Layout.jsx
+import React, { useContext } from "react";
+import Header from "./components/Header";
+import { ThemeContext } from "./components/Context";
+
+const Layout = () => {
+    const { theme } = useContext(ThemeContext);
+
+    // Apply theme globally
+    const layoutStyle =
+        theme === "light"
+            ? "min-h-screen bg-white text-black"
+            : "min-h-screen bg-gray-900 text-white";
+
+    return (
+        <div className={layoutStyle}>
+            <Header />
+            <main className="p-4">
+                <h1 className="text-2xl font-semibold">
+                    Welcome to the nested context example!
+                </h1>
+            </main>
+        </div>
+    );
+};
+
+export default Layout;
+```
+
+```jsx
+// Header.jsx
+import React from "react";
+import Navbar from "./Navbar";
+
+const Header = () => {
+    return (
+        <header className="border-b pb-2">
+            <Navbar />
+        </header>
+    );
+};
+
+export default Header;
+```
+
+```jsx
+// Navbar.jsx
+import React from "react";
+import UserPanel from "./UserPanel";
+
+const Navbar = () => {
+    return (
+        <nav className="flex justify-between items-center">
+            <h1 className="font-bold text-xl">My App</h1>
+            <UserPanel />
+        </nav>
+    );
+};
+
+export default Navbar;
+```
+
+```jsx
+// UserPanel.jsx
+import React, { useContext } from "react";
+import { AuthContext, ThemeContext } from "./Context";
+
+const UserPanel = () => {
+    const { user, logout } = useContext(AuthContext);  // from AuthContext
+    const { theme, toggleTheme } = useContext(ThemeContext);  // from ThemeContext
+
+    console.log(theme)
+
+
+    return (
+        <div >
+            {user ? (
+                <>
+                    <p>
+                        👤 {user.name} ({user.role})
+                    </p>
+                    <button
+                        className="bg-red-500 text-white px-2 py-1 rounded mt-1"
+                        onClick={logout}
+                    >
+                        Logout
+                    </button>
+                </>
+            ) : (
+                <p>Please log in</p>
+            )}
+
+            <button className="btn btn-primary" onClick={toggleTheme}>
+                Toggle Theme
+            </button>
+        </div>
+    );
+};
+
+export default UserPanel;
+```
+
 ### what is the difference between props, callback function and context api
 
 props: parent --> child
