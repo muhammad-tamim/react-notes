@@ -44,6 +44,8 @@
     - [Controlled Component:](#controlled-component)
     - [Un-controlled Component:](#un-controlled-component)
   - [Custom hook:](#custom-hook)
+  - [Feature based folder structure:](#feature-based-folder-structure)
+    - [Naming Conventions:](#naming-conventions)
 - [part 2: React Router:](#part-2-react-router)
   - [Getting started to React Routing:](#getting-started-to-react-routing)
   - [Nested Routing:](#nested-routing)
@@ -2912,6 +2914,111 @@ function useFetch(url) {
 
 export default useFetch;
 ```
+
+## Feature based folder structure:
+
+```
+my-react-app/
+│
+├── public/
+│   └── favicon.ico
+│
+├── src/
+│   │
+│   ├── features/                    
+│   │   │
+│   │   └── feature-name/     
+│   │       │   
+│   │       ├── components/ 
+│   │       │   
+│   │       ├── pages/ 
+│   │       │  
+│   │       ├── layouts/    
+│   │       │
+│   │       ├── hooks/ ---------- Features-Specific Hooks 
+│   │       │   
+│   │       ├── services/ ---------- Features-Specific API calls
+│   │       │   
+│   │       ├── utils/ ---------- Feature-Specific raw js Utilities functions
+│   │       │   
+│   │       └──context/ ---------- Features-Specific context API  
+│   │
+│   ├── shared/                     
+│   │   │
+│   │   ├── components/
+│   │   │   ├── ui/                 
+│   │   │   │   ├── buttons/
+│   │   │   │   ├── modals/
+│   │   │   │   ├── toasts/
+│   │   │   │   ├── spinners/
+│   │   │   │   └──tables/
+│   │   │   │
+│   │   │   ├── structure/ 
+│   │   │   │   ├── Navbar/
+│   │   │   │   ├── Hero/
+│   │   │   │   ├── Footer/
+│   │   │   │   └── Container/
+│   │   │   │
+│   │   │   └── forms/                
+│   │   │
+│   │   ├── hooks/                  
+│   │   │
+│   │   ├── utils/                  
+│   │   │
+│   │   ├── context/                  
+│   │   │
+│   │   └── services/               
+│   │
+│   ├── pages/                      
+│   │   ├── HomePage/
+│   │   ├── AboutPage/
+│   │   ├── ContactPage/
+│   │   ├── ErrorPage/
+│   │   └── NotFoundPage/
+│   │
+│   ├── routes/                     
+│   │
+│   ├── layouts/                    
+│   │   ├── MainLayout/
+│   │   ├── DashboardLayout/
+│   │   └── AuthLayout/
+│   │
+│   ├── providers/                    
+│   │   ├── AuthProviders.jsx
+│   │   └── ThemeProvider.jsx
+│   │
+│   ├── lib/ ------- 3rd-party libraries
+│   │   ├── firebase
+│   │   └── axios
+│   │
+│   ├── config/                   
+│   │   └── env.js
+│   │
+│   ├── styles/                     
+│   │   ├── globals.css
+│   │   └── variables.css
+│   │
+│   ├── assets/                     
+│   │   ├── images/
+│   │   └── icons/
+│   │
+│   ├── App.jsx
+│   └── main.jsx
+│
+├── .env.local
+├── .gitignore
+├── package.json
+├── vite.config.js
+└── README.md
+```
+
+### Naming Conventions: 
+
+- General Folder Names - one words & lowercase - components, pages, layouts, hooks, utils etc.
+- React Component Folders & Files - PascalCase - Navbar/Navbar.jsx, Footer/Footer.jsx, Hero/Hero.jsx
+- Non-Components (context or any js files(utils, hooks, services,)) - camelCase - AuthContext.jsx, formatDate.js, useAuth.js, authService.js
+- assets files name - kebab-case - hero-banner.png 
+
 
 # part 2: React Router:
 
