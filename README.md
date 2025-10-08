@@ -3005,11 +3005,14 @@ my-react-app/
 │   ├── App.jsx
 │   └── main.jsx
 │
-├── .env.local
 ├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package.lock.json
 ├── package.json
 ├── vite.config.js
-└── README.md
+├── README.md
+└── vite.config.js
 ```
 
 ### Naming Conventions: 
