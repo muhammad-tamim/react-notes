@@ -3886,11 +3886,16 @@ export default Dashboard;
 
 ## error handling in react router: 
 
+- errorElement: Handles runtime, loader, and render errors within a specific route and all of its nested child routes. It also catches unmatched paths inside that route branch (if no child route matches). The thrown error can be accessed and displayed using the useRouteError() hook. This hook give you an error object that might include: 
 
-- errorElement:  Catches runtime errors and loader/action errors for Root and all its children only, Also acts as fallback for unmatched paths in these routes if no child matches 
-- path: "*": catches all unmatched paths (404) globally, but it Does NOT catch runtime errors — use errorElement for that
+  - status --> 400. 500 etc
+  - statusText --> “Not Found”, “Internal Server Error” etc
+  - data --> if thrown manually with throw json()
+  - message --> regular JavaScript error message
 
-Note: If all parent routes have errorElements that handle errors and fallback for unmatched children, you don’t technically need * wildcard routes. The errorElement will already show a fallback for any unmatched nested paths.
+
+- path: "*": catches all unmatched paths (404) globally, but it Does NOT catch runtime, loader, and render errors — use errorElement for that
+
 
 ```jsx
 // main.jsx
@@ -3907,14 +3912,15 @@ import Home from './components/Home';
 import About from './components/About';
 import BlogLayout from './components/Blog/BlogLayout';
 import AllPosts from './components/Blog/AllPost';
-
+import ErrorPage from "../../pages/ErrorPage/ErrorPage";
+import NotFoundPage from "../../pages/NotFoundPage/NotFoundPage";
 
 
 const router = createBrowserRouter([
   {
     path: '/',
     Component: Root,
-    errorElement: <h1>Page not found</h1>,
+    errorElement: <ErrorPage>Page not found</ErrorPage>,
     children: [
       {
         path: '/',
@@ -3937,7 +3943,7 @@ const router = createBrowserRouter([
       },
       {
         path: "*",
-        element: <h1>page not found</h1>
+        element: <NotFoundPage>page not found</NotFoundPage>
       }
     ]
   },
@@ -3949,6 +3955,39 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 ```
+
+
+```jsx
+import React from 'react';
+import { Link, useRouteError } from 'react-router';
+
+const ErrorPage = () => {
+    const error = useRouteError();
+
+    if (error.status === 404) {
+        return <NotFoundPage />;
+    }
+
+    console.error(error);
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen text-center">
+            <h1 className="text-3xl font-bold mb-2">Something went wrong 😢</h1>
+            <p className="mb-4 text-gray-600">{error?.status || "Unknown"}</p>
+            <p className="mb-4 text-gray-600">{error?.statusText || "No status text"}</p>
+            <p className="mb-4 text-gray-600">{error?.message || "No message provided"}</p>
+            {error?.data && (
+                <p className="mb-4 text-gray-600">{JSON.stringify(error.data)}</p>
+            )}
+            <Link to="/" className="text-blue-600 underline">
+                Go Home
+            </Link>
+        </div>
+    );
+};
+
+export default ErrorPage;
+```
+
 
 ## Different way to load data in react router: 
 
