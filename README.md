@@ -15,10 +15,11 @@
     - [JSX rules:](#jsx-rules)
   - [conditional rendering](#conditional-rendering)
   - [Rendering list in react](#rendering-list-in-react)
-  - [Props, callback function, context api](#props-callback-function-context-api)
+  - [Passing Data using Props, callback function, context api and Outlet](#passing-data-using-props-callback-function-context-api-and-outlet)
     - [props](#props)
-    - [Passing Data Using Callback Functions:](#passing-data-using-callback-functions)
+    - [Callback Functions:](#callback-functions)
     - [Context API](#context-api)
+    - [Outlet](#outlet)
     - [what is the difference between props, callback function and context api](#what-is-the-difference-between-props-callback-function-and-context-api)
   - [Event Handling in react](#event-handling-in-react)
   - [useState()](#usestate)
@@ -688,7 +689,7 @@ export default App;
 ```
 ---
 
-## Props, callback function, context api
+## Passing Data using Props, callback function, context api and Outlet
 
 ### props
 
@@ -990,7 +991,7 @@ const Button = ({ onClick, children }) => {
 export default Button
 ```
 
-### Passing Data Using Callback Functions:
+### Callback Functions:
 Props can only pass data from parent to child. But sometimes, the child component needs to send data back to the parent. In such cases, A callback function a callback function helps us to passing data from Child to Parent in React.
 
 ```jsx
@@ -1356,6 +1357,23 @@ const UserPanel = () => {
 };
 
 export default UserPanel;
+```
+
+### Outlet
+
+Outlet has a builtin context feature, we can pass data using this context and received data using useOutletContext() hook.
+
+```jsx
+<Outlet context={{ test }} />
+```
+
+```jsx
+import { useOutletContext } from 'react-router-dom';
+
+const ListedBooksPage = () => {
+  const { test } = useOutletContext();
+  console.log(test); 
+}
 ```
 
 ### what is the difference between props, callback function and context api
