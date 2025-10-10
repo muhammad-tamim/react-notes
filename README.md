@@ -3917,61 +3917,44 @@ export default Dashboard;
 
 ```jsx
 // main.jsx
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-
-// Import React Router dependencies
-import { createBrowserRouter } from 'react-router';
-import { RouterProvider } from 'react-router/dom';
-
-// Import components
-import Root from './components/Root';
-import Home from './components/Home';
-import About from './components/About';
-import BlogLayout from './components/Blog/BlogLayout';
-import AllPosts from './components/Blog/AllPost';
+import { createBrowserRouter } from "react-router";
+import HomePage from "../../pages/HomePage/HomePage";
+import MainLayout from "../../layouts/MainLayout/MainLayout";
 import ErrorPage from "../../pages/ErrorPage/ErrorPage";
 import NotFoundPage from "../../pages/NotFoundPage/NotFoundPage";
+import BookDetailsPage from "../../features/books/pages/BookDetailsPage/BookDetailsPage";
+import ListedBooksPage from "../../features/books/pages/ListedBooksPage/ListedBooksPage";
+import PagesToReadPage from "../../features/books/pages/PagesToReadPage/PagesToReadPage";
 
-
-const router = createBrowserRouter([
-  {
-    path: '/',
-    Component: Root,
-    errorElement: <ErrorPage>Page not found</ErrorPage>,
-    children: [
-      {
+export const AppRoutes = createBrowserRouter([
+    {
         path: '/',
-        Component: Home
-      },
-      {
-        path: '/about',
-        Component: About
-      },
-      {
-        path: '/blog',
-        Component: BlogLayout,
-        errorElement: <h1>page not found</h1>,
+        Component: MainLayout,
+        errorElement: <ErrorPage></ErrorPage>,
         children: [
-          {
-            index: true,
-            Component: AllPosts
-          },
+            {
+                index: true,
+                Component: HomePage
+            },
+            {
+                path: 'book-details/:id',
+                Component: BookDetailsPage
+            },
+            {
+                path: 'listed-books',
+                Component: ListedBooksPage,
+            },
+            {
+                path: 'pages-to-read',
+                Component: PagesToReadPage,
+            },
         ]
-      },
-      {
+    },
+    {
         path: "*",
-        element: <NotFoundPage>page not found</NotFoundPage>
-      }
-    ]
-  },
+        element: <NotFoundPage></NotFoundPage>
+    }
 ])
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <RouterProvider router={router}></RouterProvider>
-  </StrictMode>,
-)
 ```
 
 
