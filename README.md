@@ -2953,13 +2953,15 @@ my-react-app/
 │   │       │  
 │   │       ├── layouts/    
 │   │       │
-│   │       ├── hooks/ ---------- Features-Specific Hooks 
+│   │       ├── hooks/ 
 │   │       │   
 │   │       ├── services/ ---------- Features-Specific API calls
 │   │       │   
 │   │       ├── utils/ ---------- Feature-Specific raw js Utilities functions
 │   │       │   
-│   │       └──context/ ---------- Features-Specific context API  
+│   │       ├── providers/ 
+│   │       │   
+│   │       └──context/  
 │   │
 │   ├── shared/                     
 │   │   │
