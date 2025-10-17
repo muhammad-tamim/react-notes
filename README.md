@@ -131,104 +131,141 @@ createRoot(document.getElementById('root')).render(
 ## Feature based folder structure:
 
 ```
-my-react-app/
-│
-├── public/
-│   └── favicon.ico
-│
-├── src/
-│   │
-│   ├── features/                    
-│   │   │
-│   │   └── feature-name/     
-│   │       │   
-│   │       ├── components/ 
-│   │       │   
-│   │       ├── pages/ 
-│   │       │  
-│   │       ├── layouts/    
-│   │       │
-│   │       ├── hooks/ 
-│   │       │   
-│   │       ├── services/ ---------- Features-Specific API calls
-│   │       │   
-│   │       ├── utils/ ---------- Feature-Specific raw js Utilities functions
-│   │       │   
-│   │       ├── providers/ 
-│   │       │   
-│   │       └──context/  
-│   │
-│   ├── shared/                     
-│   │   │
-│   │   ├── components/
-│   │   │   ├── ui/                 
-│   │   │   │   ├── buttons/
-│   │   │   │   ├── modals/
-│   │   │   │   ├── toasts/
-│   │   │   │   ├── spinners/
-│   │   │   │   └──tables/
-│   │   │   │
-│   │   │   ├── structure/ 
-│   │   │   │   ├── Navbar/
-│   │   │   │   ├── Hero/
-│   │   │   │   ├── Footer/
-│   │   │   │   └── Container/
-│   │   │   │
-│   │   │   └── forms/                
-│   │   │
-│   │   ├── hooks/                  
-│   │   │
-│   │   ├── utils/                  
-│   │   │
-│   │   ├── context/                  
-│   │   │
-│   │   └── services/               
-│   │
-│   ├── pages/                      
-│   │   ├── HomePage/
-│   │   ├── AboutPage/
-│   │   ├── ContactPage/
-│   │   ├── ErrorPage/
-│   │   └── NotFoundPage/
-│   │
-│   ├── routes/                     
-│   │
-│   ├── layouts/                    
-│   │   ├── MainLayout/
-│   │   ├── DashboardLayout/
-│   │   └── AuthLayout/
-│   │
-│   ├── providers/                    
-│   │   ├── AuthProviders.jsx
-│   │   └── ThemeProvider.jsx
-│   │
-│   ├── lib/ ------- 3rd-party libraries
-│   │   ├── firebase
-│   │   └── axios
-│   │
-│   ├── config/                   
-│   │   └── env.js
-│   │
-│   ├── styles/                     
-│   │   ├── globals.css
-│   │   └── variables.css
-│   │
-│   ├── assets/                     
-│   │   ├── images/
-│   │   └── icons/
-│   │
-│   ├── App.jsx
-│   └── main.jsx
-│
-├── .gitignore
-├── eslint.config.js
-├── index.html
-├── package.lock.json
-├── package.json
-├── vite.config.js
-├── README.md
-└── vite.config.js
+.
+└── my-react-app/
+    ├── node_modules
+    ├── public
+    ├── src/
+    │   ├── assets
+    │   ├── core/
+    │   │   ├── main.js
+    │   │   ├── providers/
+    │   │   │   ├── AppProvider.jsx
+    │   │   │   ├── AuthProvider.jsx
+    │   │   │   └── ThemeProvider.jsx
+    │   │   ├── routes/
+    │   │   │   ├── AppRoutes.jsx
+    │   │   │   └── ProtectedRoute.jsx
+    │   │   ├── layouts/
+    │   │   │   ├── MainLayout.jsx
+    │   │   │   ├── DashboardLayout.jsx
+    │   │   │   └── AuthLayout.jsx
+    │   │   └── hooks/
+    │   │       ├── useAuth.js
+    │   │       └── useTheme.js
+    │   ├── features/
+    │   │   ├── features-name /
+    │   │   │   ├── components
+    │   │   │   ├── pages
+    │   │   │   ├── hooks
+    │   │   │   ├── utils
+    │   │   │   ├── context
+    │   │   │   └── providers
+    │   │   ├── users
+    │   │   ├── products
+    │   │   ├── dashboard
+    │   │   ├── bookmarks
+    │   │   ├── cart
+    │   │   └── payment
+    │   ├── pages/
+    │   │   ├── HomePage.jsx
+    │   │   ├── AboutPage.jsx
+    │   │   ├── ContactPage.jsx
+    │   │   ├── ErrorPage.jsx
+    │   │   └── NotFoundPage.jsx
+    │   ├── shared/
+    │   │   ├── components/
+    │   │   │   ├── ui
+    │   │   │   └── structure/
+    │   │   │       ├── Navbar.jsx
+    │   │   │       ├── Footer.jsx
+    │   │   │       └── Hero.jsx
+    │   │   ├── hooks
+    │   │   └── utils
+    │   └── styles/
+    │       └── index.css
+    ├── .gitignore
+    ├── eslint.config.js
+    ├── index.html
+    ├── package-lock.json
+    ├── package.json
+    ├── README.md
+    └── vite.config.js
 ```
+
+<!-- 
+
+my-react-app
+  node_modules
+  public
+  src
+    assets
+    core
+      main.js
+      providers
+        AppProvider.jsx
+        AuthProvider.jsx
+        ThemeProvider.jsx
+      routes
+        routes.jsx
+        ProtectedRoute.jsx
+      layouts
+        MainLayout.jsx
+        DashboardLayout.jsx
+        AuthLayout.jsx
+      config 
+        eng.local
+      hooks
+        useAuth.js
+        useTheme.js
+    features
+      featues-name 
+        components
+        pages
+        hooks
+        utils
+        context
+        providers
+      users
+      products
+      dashboard
+      bookmarks
+      cart
+      payment
+    pages
+      HomePage.jsx
+      AboutPage.jsx
+      ContactPage.jsx
+      ErrorPage.jsx
+      NotFoundPage.jsx
+    shared
+      components
+        ui
+        structure
+          Navbar.jsx
+          Footer.jsx
+          Hero.jsx
+      hooks
+      utils
+    styles
+      index.css
+      
+      
+  
+  .gitignore
+  eslint.config.js
+  index.html
+  package-lock.json
+  package.json
+  README.md
+  vite.config.js
+ -->
+
+**Note:**
+
+- state + API + UI logic → it’s a feature.
+- static or purely layout/navigation → it’s a page.
+- reused everywhere → it goes under shared/.
 
 ### Naming Conventions: 
 
