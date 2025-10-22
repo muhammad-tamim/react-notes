@@ -47,6 +47,8 @@
     - [Controlled Component:](#controlled-component)
     - [Un-controlled Component:](#un-controlled-component)
   - [Custom hook:](#custom-hook)
+  - [Others](#others)
+    - [How to implement dynamic title using useLocation() hook:](#how-to-implement-dynamic-title-using-uselocation-hook)
 - [part 2: React Router:](#part-2-react-router)
   - [Getting started to React Routing:](#getting-started-to-react-routing)
   - [Nested Routing:](#nested-routing)
@@ -3100,6 +3102,81 @@ function useFetch(url) {
 export default useFetch;
 ```
 
+
+## Others
+
+### How to implement dynamic title using useLocation() hook: 
+
+```jsx
+import React, { useEffect } from 'react';
+import { useLocation, useParams } from 'react-router';
+
+const DynamicTitle = () => {
+    const location = useLocation()
+    const { id } = useParams()
+    console.log(location) // {pathname: '/bookings', search: '', hash: '', state: null, key: 'l5afr22c'} 
+    useEffect(() => {
+        let title = 'law.bd';
+
+        switch (location.pathname) {
+            case '/':
+                title = 'Home';
+                break;
+            case '/bookings':
+                title = 'Law.BD | Bookings';
+                break;
+            case '/blogs':
+                title = 'Law.BD | Blogs';
+                break;
+            case '/contact-us':
+                title = 'Law.BD | Contact-Us';
+                break;
+            case '/contact-now':
+                title = 'Law.BD | Contact-Now';
+                break;
+            default:
+                title = '404 Not Found'
+        }
+
+        if (location.pathname.startsWith('/lawyers-details')) {
+            title = `Law.bd | Lawyers-Details | ${id}`;
+        }
+
+
+        document.title = title;
+
+
+    }, [location, id])
+
+    return null
+};
+
+export default DynamicTitle;
+```
+
+```jsx
+import React from 'react';
+import Navbar from '../../shared/components/structure/Navbar';
+import { Outlet } from 'react-router';
+import Footer from '../../shared/components/structure/Footer';
+import Container from '../../shared/components/structure/Container';
+import DynamicTitle from '../../shared/components/DynamicTitle';
+
+const MainLayout = () => {
+    return (
+        <div>
+            <DynamicTitle></DynamicTitle>
+            <Navbar></Navbar>
+            <Container>
+                <Outlet></Outlet>
+            </Container>
+            <Footer></Footer>
+        </div>
+    );
+};
+
+export default MainLayout;
+```
 
 # part 2: React Router:
 
