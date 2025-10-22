@@ -48,7 +48,7 @@
     - [Un-controlled Component:](#un-controlled-component)
   - [Custom hook:](#custom-hook)
   - [Others](#others)
-    - [How to implement dynamic title using useLocation() hook:](#how-to-implement-dynamic-title-using-uselocation-hook)
+    - [How to implement dynamic title:](#how-to-implement-dynamic-title)
 - [part 2: React Router:](#part-2-react-router)
   - [Getting started to React Routing:](#getting-started-to-react-routing)
   - [Nested Routing:](#nested-routing)
@@ -3105,7 +3105,9 @@ export default useFetch;
 
 ## Others
 
-### How to implement dynamic title using useLocation() hook: 
+### How to implement dynamic title: 
+
+- using useLocation() hook: 
 
 ```jsx
 import React, { useEffect } from 'react';
@@ -3177,6 +3179,32 @@ const MainLayout = () => {
 
 export default MainLayout;
 ```
+
+- using `<article>`
+
+```jsx
+import React from 'react';
+import Hero from '../shared/components/structure/Hero';
+import SuccessNumbers from '../shared/components/structure/SuccessNumbers';
+import { useLoaderData } from 'react-router';
+import Lawyers from '../features/lawyers/components/HomePageLayersCards/Lawyers';
+
+const HomePage = () => {
+    const lawyers = useLoaderData()
+    return (
+        <article>
+            <title>{"Law.BD | Home"}</title>
+            <div>
+                <Hero></Hero>
+                <Lawyers lawyers={lawyers}></Lawyers>
+                <SuccessNumbers></SuccessNumbers>
+            </div>
+        </article>
+    );
+};
+
+export default HomePage;
+``` 
 
 # part 2: React Router:
 
