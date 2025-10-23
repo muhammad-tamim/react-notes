@@ -62,6 +62,8 @@
   - [Dynamic Routes:](#dynamic-routes)
   - [action api and `<Form>`:](#action-api-and-form)
   - [Pending UI:](#pending-ui)
+- [Firebase Authentication](#firebase-authentication)
+  - [Setup firebase:](#setup-firebase)
 
 ---
 
@@ -5165,3 +5167,43 @@ const Posts = ({ fetchData }) => {
 
 export default Posts;
 ```
+
+# Firebase Authentication
+
+<!-- ## Authentication vs Authorization
+
+- Authentication = Verify who you are
+- Authorization = check what can you do -->
+
+## Setup firebase: 
+- step 1: First install the firebase, then Go to the firebase console and create a project and follow the auth docs: 
+
+```jsx
+npm install firebase
+```
+
+https://console.firebase.google.com/
+
+https://firebase.google.com/docs/auth
+
+- step 2: 
+
+```jsx
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDqIYO-RhAi3OF1VUhKB8ZAeIQLJ6gdSgc",
+  authDomain: "module-49-58a79.firebaseapp.com",
+  projectId: "module-49-58a79",
+  storageBucket: "module-49-58a79.firebasestorage.app",
+  messagingSenderId: "422912402173",
+  appId: "1:422912402173:web:0840180817d05f718f1494"
+};
+
+const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+```
+
+
