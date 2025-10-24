@@ -62,7 +62,7 @@
   - [Dynamic Routes:](#dynamic-routes)
   - [action api and `<Form>`:](#action-api-and-form)
   - [Pending UI:](#pending-ui)
-- [Firebase Authentication](#firebase-authentication)
+- [Part 3: Firebase Authentication](#part-3-firebase-authentication)
   - [Setup firebase:](#setup-firebase)
   - [SignIn and signOut with google:](#signin-and-signout-with-google)
   - [SignIn and SignOut with GitHub:](#signin-and-signout-with-github)
@@ -5170,12 +5170,7 @@ const Posts = ({ fetchData }) => {
 export default Posts;
 ```
 
-# Firebase Authentication
-
-<!-- ## Authentication vs Authorization
-
-- Authentication = Verify who you are
-- Authorization = check what can you do -->
+# Part 3: Firebase Authentication
 
 ## Setup firebase: 
 - step 1: First install the firebase, then Go to the firebase console and create a project and follow the auth docs: 
