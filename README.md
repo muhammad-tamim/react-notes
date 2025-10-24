@@ -64,7 +64,7 @@
   - [Pending UI:](#pending-ui)
 - [Firebase Authentication](#firebase-authentication)
   - [Setup firebase:](#setup-firebase)
-  - [Sign in with google:](#sign-in-with-google)
+  - [SignIn and signOut with google:](#signin-and-signout-with-google)
 
 ---
 
@@ -5207,7 +5207,7 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 ```
 
-## Sign in with google: 
+## SignIn and signOut with google: 
 
 - step 1: 
 
@@ -5215,22 +5215,33 @@ Go to the firebase console / build / Authentication and set Sign-in methods:
 
 ![image](/images/sing-in-methods.png)
 
-- step 2: 
 
-Create an instance of the Google provider object:
+- step 2: SignIn
 
 ```jsx
-import { GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
 
 const provider = new GoogleAuthProvider();
-```
 
-- step 3: 
-
-```jsx
 signInWithPopup(auth, provider)
     .then((result) => {
         console.log(result)
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+```
+
+- step 3: SignOut
+
+```jsx
+import { signOut } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+signOut(auth)
+    .then(() => {
     })
     .catch((error) => {
         console.log(error)
