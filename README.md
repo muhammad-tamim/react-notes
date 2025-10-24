@@ -65,6 +65,7 @@
 - [Firebase Authentication](#firebase-authentication)
   - [Setup firebase:](#setup-firebase)
   - [SignIn and signOut with google:](#signin-and-signout-with-google)
+  - [SignIn and SignOut with GitHub:](#signin-and-signout-with-github)
 
 ---
 
@@ -5247,3 +5248,119 @@ signOut(auth)
         console.log(error)
     });
 ```
+
+## SignIn and SignOut with GitHub:
+
+- step 1: 
+
+Go to the firebase console / build / Authentication and set Sign-in methods: 
+
+![image](/images/sing-in-methods.png)
+
+now, if you want to select github you will see this fields: 
+
+![image](/images/github-form.png)
+
+- step 2: 
+
+go to the github: settings/Developer Settings / create new Github App / and fell the form:
+
+![image](/images/create-githu-app-form.png)
+
+after completing the form will give see client id and secret like this, so use this to your firebase github methods form: 
+
+![image](/images/github-clientid-and-secreat.png)
+
+![image](/images/firebase-github-fell-form.png)
+
+- step 3: signIn
+
+```jsx
+import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../firebase/firebase.init';
+
+const provider = new GithubAuthProvider();
+
+signInWithPopup(auth, provider)
+    .then((result) => {
+        console.log(result)
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+```
+
+- step 4: signOut
+
+```jsx
+import { signOut } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+signOut(auth)
+    .then(() => {
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
