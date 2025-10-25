@@ -64,6 +64,7 @@
   - [Pending UI:](#pending-ui)
 - [Part 3: Firebase Authentication](#part-3-firebase-authentication)
   - [Setup firebase:](#setup-firebase)
+  - [SingUp with email \& password and signIn, signOut:](#singup-with-email--password-and-signin-signout)
   - [SignIn and signOut with google:](#signin-and-signout-with-google)
   - [SignIn and SignOut with GitHub:](#signin-and-signout-with-github)
 
@@ -5201,6 +5202,58 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
+```
+
+## SingUp with email & password and signIn, signOut:
+
+- Step 1: 
+
+Go to the firebase console / build / Authentication and set methods: 
+
+![image](/images/sing-in-methods.png)
+
+- step 2: SignUp
+
+```jsx
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    console.log(userCredential)
+  })
+  .catch((error) => {
+    console.log(error)
+  });
+```
+
+- step 3: SignIn
+
+```jsx
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    console.log(userCredential)
+  })
+  .catch((error) => {
+    console.log(error)
+  });
+```
+
+- step 4: SignOut
+
+```jsx
+import { signOut } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+signOut(auth)
+    .then(() => {
+    })
+    .catch((error) => {
+        console.log(error)
+    });
 ```
 
 ## SignIn and signOut with google: 
