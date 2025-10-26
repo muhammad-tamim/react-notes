@@ -67,6 +67,10 @@
   - [SingUp with email \& password and signIn, signOut:](#singup-with-email--password-and-signin-signout)
   - [SignIn and signOut with google:](#signin-and-signout-with-google)
   - [SignIn and SignOut with GitHub:](#signin-and-signout-with-github)
+  - [Manage Users:](#manage-users)
+    - [Get Current signin user info:](#get-current-signin-user-info)
+      - [Using onAuthStateChanged (recommended):](#using-onauthstatechanged-recommended)
+      - [Using auth.currentUser:](#using-authcurrentuser)
 
 ---
 
@@ -5352,11 +5356,41 @@ signOut(auth)
     });
 ```
 
+## Manage Users: 
 
+### Get Current signin user info:
 
+#### Using onAuthStateChanged (recommended):
 
+```jsx
+import {onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/firebase.init";
 
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log(user)
+    } else {
+        console.log("not found")
+    }
+});
+```
 
+#### Using auth.currentUser: 
+
+```jsx
+import { getAuth } from "firebase/auth";
+
+const auth = getAuth();
+const user = auth.currentUser;
+
+if (user !== null) {
+  console.log(user)
+} else {
+  console.log("no user")
+}
+```
+
+Note: currentUser might also be null because the auth object has not finished initializing. If you use an onAuthStateChanged observer to keep track of the user's sign-in status, you don't need to handle this case.
 
 
 
