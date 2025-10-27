@@ -68,9 +68,7 @@
   - [SignIn and signOut with google:](#signin-and-signout-with-google)
   - [SignIn and SignOut with GitHub:](#signin-and-signout-with-github)
   - [SignIn and SignOut with Facebook:](#signin-and-signout-with-facebook)
-  - [SignIn and SignOut with Apple:](#signin-and-signout-with-apple)
   - [SignIn and SignOut with Twitter:](#signin-and-signout-with-twitter)
-  - [SignIn and SignOut with Microsoft:](#signin-and-signout-with-microsoft)
   - [Manage Users:](#manage-users)
     - [Get Current signin user info:](#get-current-signin-user-info)
       - [Using onAuthStateChanged (recommended):](#using-onauthstatechanged-recommended)
@@ -5434,9 +5432,57 @@ signOut(auth)
     });
 ```
 
-## SignIn and SignOut with Apple:
 ## SignIn and SignOut with Twitter:
-## SignIn and SignOut with Microsoft:
+
+- step 1: Firebase
+
+Go to the firebase console / build / Authentication and set Sign-in methods: 
+
+![image](/images/sing-in-methods.png)
+
+now, if you want to select twitter you will see this fields: 
+
+![image](/images/twitter-firebse.png)
+
+- step 2: twitter
+
+go to the https://developer.x.com/en and then press developer portal on the right side in the navbar, then it redirects you to this page https://developer.x.com/en/portal/dashboard. Then in the dashboard you find api key and secret: 
+
+![image](/images/twitter-keyandtoken.png)
+
+
+- step 3: signIn
+
+```jsx
+import {signInWithPopup, TwitterAuthProvider } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+const provider = new FacebookAuthProvider();
+
+signInWithPopup(auth, provider)
+  .then((result) => {
+    const credential = TwitterAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    const secret = credential.secret;
+    
+  }).catch((error) => {
+    console.log(error)
+  });
+```
+
+- step 4: signOut
+
+```jsx
+import { signOut } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+signOut(auth)
+    .then(() => {
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+```
 
 ## Manage Users: 
 
