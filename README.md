@@ -71,6 +71,8 @@
     - [Get Current signin user info:](#get-current-signin-user-info)
       - [Using onAuthStateChanged (recommended):](#using-onauthstatechanged-recommended)
       - [Using auth.currentUser:](#using-authcurrentuser)
+    - [using Using the Returned userCredential](#using-using-the-returned-usercredential)
+    - [Update Profile:](#update-profile)
 
 ---
 
@@ -5390,22 +5392,81 @@ if (user !== null) {
 }
 ```
 
-Note: currentUser might also be null because the auth object has not finished initializing. If you use an onAuthStateChanged observer to keep track of the user's sign-in status, you don't need to handle this case.
+note: auth.currentUser might return null immediately after page load because Firebase takes a moment to restore the user's session from storage.
 
 
+### using Using the Returned userCredential
 
+When you call Firebase methods like:
+- createUserWithEmailAndPassword()
+- signInWithEmailAndPassword()
+- signInWithPopup()
 
+They all return a Promise that resolves to a userCredential object.
+You can access the current user instantly from it, right after successful authentication.
 
+```jsx
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase/firebase.init";
 
+createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        // userCredential contains the user info
+        const user = userCredential.user;
+        console.log("User created and signed in:", user);
+    })
+    .catch((error) => {
+        console.error("Signup error:", error);
+    });
+```
 
+Note: 
+- onAuthStateChanged() - Always running listener - Best for tracking user state across your entire app.
+- auth.currentUser - Quick check - Access user info if Firebase is already initialized.
+- userCredential.user - Immediately after sign-up/sign-in - Get the current user instantly after authentication actions.
 
+### Update Profile: 
 
+```jsx
+import { getAuth, updateProfile } from "firebase/auth";
 
+const auth = getAuth();
 
+updateProfile(auth.currentUser, {
+  displayName: "Jane Q. User", photoURL: "https://example.com/jane-q-user/profile.jpg"
+}).then(() => {
+  console.log("Profile Updated")
+}).catch((error) => {
+  console.log(error)
+});
+```
 
+You can also set a user's email address with the updateEmail and user password updatePassword methods:
 
+```jsx
+import { getAuth, updateEmail } from "firebase/auth";
+const auth = getAuth();
+updateEmail(auth.currentUser, "user@example.com").then(() => {
+  console.log("email updated successful")
+}).catch((error) => {
+  console.log(error)
+});
+```
 
+```jsx
+import { getAuth, updatePassword } from "firebase/auth";
 
+const auth = getAuth();
+
+const user = auth.currentUser;
+const newPassword = "getASecureRandomPassword";
+
+updatePassword(user, newPassword).then(() => {
+  console.log("Update successful")
+}).catch((error) => {
+  console.log(error)
+});
+```
 
 
 
