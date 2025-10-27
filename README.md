@@ -67,6 +67,10 @@
   - [SingUp with email \& password and signIn, signOut:](#singup-with-email--password-and-signin-signout)
   - [SignIn and signOut with google:](#signin-and-signout-with-google)
   - [SignIn and SignOut with GitHub:](#signin-and-signout-with-github)
+  - [SignIn and SignOut with Facebook:](#signin-and-signout-with-facebook)
+  - [SignIn and SignOut with Apple:](#signin-and-signout-with-apple)
+  - [SignIn and SignOut with Twitter:](#signin-and-signout-with-twitter)
+  - [SignIn and SignOut with Microsoft:](#signin-and-signout-with-microsoft)
   - [Manage Users:](#manage-users)
     - [Get Current signin user info:](#get-current-signin-user-info)
       - [Using onAuthStateChanged (recommended):](#using-onauthstatechanged-recommended)
@@ -5359,6 +5363,80 @@ signOut(auth)
         console.log(error)
     });
 ```
+
+## SignIn and SignOut with Facebook:
+
+- step 1: Firebase
+
+Go to the firebase console / build / Authentication and set Sign-in methods: 
+
+![image](/images/sing-in-methods.png)
+
+now, if you want to select facebook you will see this fields: 
+
+![image](/images/firebase-appid-appsecret.png)
+
+- step 2: Facebook
+
+go to the and you will see getStarted button on the right side of the page, click that button. if you are new it will redirect you to register page but if you already register it will show you to the create apps page, where you can create apps.
+
+https://developers.facebook.com
+
+https://developers.facebook.com/apps/
+
+![image](/images/get-started.png)
+
+![image](/images/app.png)
+
+if you press the create apps button it will show you couple of forms, just fill the forms. after that you will find dashboard page. in the dashboard page, you will see app Setting/basic, click it: 
+
+![image](/images/dashboard.png)
+
+here, you will find you AppId and App Secret that need on the firebase: 
+
+![image](/images/facebookAppSecret.png)
+
+
+- step 3: signIn
+
+```jsx
+import {signInWithPopup, FacebookAuthProvider } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+const provider = new FacebookAuthProvider();
+
+signInWithPopup(auth, provider)
+  .then((result) => {
+
+    // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+    const credential = FacebookAuthProvider.credentialFromResult(result);
+    const accessToken = credential.accessToken;
+
+    console.log(result)
+    console.log(accessToken)
+  })
+  .catch((error) => {
+    console.log(error)
+  });
+```
+
+- step 4: signOut
+
+```jsx
+import { signOut } from "firebase/auth";
+import { auth } from '../firebase/firebase.init';
+
+signOut(auth)
+    .then(() => {
+    })
+    .catch((error) => {
+        console.log(error)
+    });
+```
+
+## SignIn and SignOut with Apple:
+## SignIn and SignOut with Twitter:
+## SignIn and SignOut with Microsoft:
 
 ## Manage Users: 
 
