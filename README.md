@@ -2574,7 +2574,7 @@ export default App;
 ```
 
 - Unmounting:
-useEffect with cleanup function only works when the component is unmounted.
+cleanup function inside the useEffect only works when the component is unmounted (removed from the DOM).
 
 ```jsx
 // App.jsx
@@ -2605,7 +2605,45 @@ function App() {
 export default App;
 ```
 
-Note: Without a cleanup function, the code works at first, but over time it can cause memory leaks, wasted CPU, and make the website slow or unstable. This happens because the setInterval runs forever, even after the component is removed from the DOM. Using a cleanup function ensures that when the component is unmounted, the interval is stopped.
+**What Happens Without Cleanup:**
+
+If you remove the cleanup part:
+
+```jsx
+useEffect(() => {
+  setInterval(() => {
+    setTime(new Date().toLocaleTimeString());
+  }, 1000);
+}, []);
+```
+
+Then:
+
+- Every time the component mounts (or re-mounts), a new interval is started.
+- When the component unmounts, the interval keeps running in the background.
+
+That means:
+
+- JavaScript continues to call setTime() every second,
+- even though the component is gone,
+- causing memory leaks, CPU usage, and sluggish performance over time.
+
+another example: 
+
+```jsx
+    useEffect(() => {
+        const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                console.log(currentUser)
+            }
+        })
+        return () => {
+            unSubscribe()
+        }
+    }, [])
+```
+
+Returning unSubscribe inside the useEffect ensures that, When the component unmounts, the listener is removed.
 
 ---
 
