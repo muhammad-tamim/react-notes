@@ -73,6 +73,7 @@
       - [Using auth.currentUser:](#using-authcurrentuser)
     - [using Using the Returned userCredential](#using-using-the-returned-usercredential)
     - [Update Profile:](#update-profile)
+    - [Send a user verification email \& password reset email](#send-a-user-verification-email--password-reset-email)
 
 ---
 
@@ -5468,6 +5469,31 @@ updatePassword(user, newPassword).then(() => {
 });
 ```
 
+### Send a user verification email & password reset email
+
+```jsx
+import { getAuth, sendEmailVerification } from "firebase/auth";
+
+const auth = getAuth();
+
+sendEmailVerification(auth.currentUser)
+  .then(() => {
+    console.log("verification mail sent")
+  });
+```
+
+```jsx
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+
+const auth = getAuth();
+sendPasswordResetEmail(auth, email)
+  .then(() => {
+    console.log("Password reset email sent!")
+  })
+  .catch((error) => {
+    console.log(error)
+  });
+```
 
 
 
