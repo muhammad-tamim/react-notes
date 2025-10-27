@@ -74,6 +74,7 @@
     - [using Using the Returned userCredential](#using-using-the-returned-usercredential)
     - [Update Profile:](#update-profile)
     - [Send a user verification email \& password reset email](#send-a-user-verification-email--password-reset-email)
+    - [Delete a user:](#delete-a-user)
 
 ---
 
@@ -5495,41 +5496,17 @@ sendPasswordResetEmail(auth, email)
   });
 ```
 
+### Delete a user:
 
+```jsx
+import { getAuth, deleteUser } from "firebase/auth";
 
+const auth = getAuth();
+const user = auth.currentUser;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+deleteUser(user).then(() => {
+  console.log("User deleted")
+}).catch((error) => {
+  console.log(error)
+});
+```
