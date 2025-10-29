@@ -77,6 +77,8 @@
     - [Update Profile:](#update-profile)
     - [Send a user verification email \& password reset email](#send-a-user-verification-email--password-reset-email)
     - [Delete a user:](#delete-a-user)
+  - [example:](#example)
+    - [private route example:](#private-route-example)
 
 ---
 
@@ -5671,4 +5673,296 @@ deleteUser(user).then(() => {
 }).catch((error) => {
   console.log(error)
 });
+```
+
+
+## example: 
+
+### private route example:
+
+```jsx
+// main.jsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client';
+import './index.css'
+import { RouterProvider } from 'react-router';
+import { router } from './routes/Router';
+import AuthProvider from './providers/AuthProvider';
+
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <AuthProvider>
+      <RouterProvider router={router}></RouterProvider>
+    </AuthProvider>
+  </StrictMode>,
+)
+```
+
+```jsx
+// router.jsx
+import { createBrowserRouter } from "react-router";
+import MainLayout from "../layouts/MainLayout";
+import HomePage from "../pages/HomePage";
+import SignIn from "../pages/SignIn";
+import SignUp from "../pages/SignUp";
+import Orders from "../pages/Orders";
+import Profile from "../pages/Profile";
+import PrivateRoute from "./PrivateRoute";
+import Dashboard from "../pages/Dashboard";
+
+export const router = createBrowserRouter([
+    {
+        path: '/',
+        element: <MainLayout></MainLayout>,
+        children: [
+            {
+                index: true,
+                element: <HomePage></HomePage>
+            },
+            {
+                path: 'sign-in',
+                element: <SignIn></SignIn>
+            },
+            {
+                path: 'sign-up',
+                element: <SignUp></SignUp>
+            },
+            {
+                path: 'orders',
+                element: (
+                    <PrivateRoute>
+                        <Orders></Orders>
+                    </PrivateRoute>
+                )
+            },
+            {
+                path: 'profile',
+                element: <PrivateRoute>
+                    <Profile></Profile>
+                </PrivateRoute>
+            },
+            {
+                path: 'dashboard',
+                element: <PrivateRoute>
+                    <Dashboard></Dashboard>
+                </PrivateRoute>
+            }
+        ]
+    },
+]);
+```
+
+```jsx
+// PrivateRoute.jsx
+import React, { use } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { Navigate, useLocation } from 'react-router';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const PrivateRoute = ({ children }) => {
+    const location = useLocation();
+    console.log(location)
+    const { user, loading } = use(AuthContext)
+
+    if (loading) {
+        return <LoadingSpinner></LoadingSpinner>
+    }
+
+    if (!user) {
+        return <Navigate to="/sign-in" state={location.pathname}></Navigate>
+    }
+
+    return children
+};
+
+export default PrivateRoute;
+```
+
+```jsx
+// AuthProvider.jsx
+import React, { useEffect, useState } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { app } from '../firebase/firebase.config';
+import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
+
+const AuthProvider = ({ children }) => {
+    const auth = getAuth(app);
+    const [user, setUser] = useState(null)
+    const [loading, setLoading] = useState(true)
+
+    const signUpUser = (email, password) => {
+        setLoading(true)
+        return createUserWithEmailAndPassword(auth, email, password)
+    }
+
+    const signInUser = (email, password) => {
+        setLoading(true)
+        return signInWithEmailAndPassword(auth, email, password)
+    }
+
+    const provider = new GoogleAuthProvider()
+
+    const signInUserWithGoogle = () => {
+        setLoading(true)
+        return signInWithPopup(auth, provider)
+    }
+
+    const signOutUser = () => {
+        setLoading(true)
+        signOut(auth)
+    }
+
+    useEffect(() => {
+        const unSubscribe = onAuthStateChanged(auth, (CurrentUser) => {
+            setUser(CurrentUser)
+            setLoading(false)
+        })
+        return () => {
+            unSubscribe()
+        }
+    }, [auth])
+
+    const userInfo = {
+        user,
+        loading,
+        signUpUser,
+        signInUser,
+        signInUserWithGoogle,
+        signOutUser
+    }
+
+    return (
+        <AuthContext.Provider value={userInfo}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
+
+export default AuthProvider;
+```
+
+```jsx
+// AuthContext.jsx
+import { createContext } from "react";
+
+export const AuthContext = createContext(null)
+```
+
+```jsx
+// SignIn.jsx
+import React, { use } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { AuthContext } from '../context/AuthContext';
+import { FaGoogle } from 'react-icons/fa';
+
+const SignIn = () => {
+    const navigate = useNavigate();
+    const location = useLocation()
+    console.log(location)
+    const { signInUser, signInUserWithGoogle } = use(AuthContext)
+
+    const handleSignIn = (e) => {
+        e.preventDefault()
+
+        const email = e.target.email.value
+        const password = e.target.password.value
+
+        signInUser(email, password)
+            .then((userCredential) => {
+                console.log(userCredential)
+                navigate(location?.state || '/')
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
+
+    const handleGoogleClick = () => {
+        signInUserWithGoogle()
+            .then((result) => {
+                console.log(result)
+                navigate(location?.state || '/')
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
+    return (
+        <div className='min-h-[calc(100vh-148px)] flex flex-col gap-5 items-center justify-center bg-gray-300'>
+            <h1>SignIn</h1>
+            <form onSubmit={handleSignIn} className='flex flex-col gap-5'>
+                <input type="email" name='email' className='input' placeholder='email' />
+                <input type="password" name='password' className='input' placeholder='password' />
+                <button className='btn' type='submit'>SignIn</button>
+                <p>Don't have an account, <Link to={"sign-up"} className='text-blue-500'>SignUp</Link></p>
+                <hr />
+                <button onClick={handleGoogleClick} className='btn btn-circle mx-auto'><FaGoogle></FaGoogle></button>
+            </form>
+        </div >
+    );
+};
+
+export default SignIn;
+```
+
+```jsx
+// SignUp.jsx
+import React, { use } from 'react';
+import { Link, useNavigate } from 'react-router';
+import { AuthContext } from '../context/AuthContext';
+import { FaGoogle } from 'react-icons/fa';
+
+const SignUp = () => {
+    const navigate = useNavigate();
+    const { signUpUser, signInUserWithGoogle } = use(AuthContext)
+
+    const handleSignUp = (e) => {
+        e.preventDefault()
+
+        // const name = e.target.name.value
+        // const photoUrl = e.target.photoUrl.value
+        const email = e.target.email.value
+        const password = e.target.password.value
+
+        signUpUser(email, password)
+            .then((userCredential) => {
+                console.log(userCredential)
+                navigate('/')
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
+    const handleGoogleClick = () => {
+        signInUserWithGoogle()
+            .then((result) => {
+                console.log(result)
+                navigate('/')
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+    return (
+        <div className='min-h-[calc(100vh-148px)] flex flex-col gap-5 items-center justify-center bg-gray-300'>
+            <h1>SignIn</h1>
+            <form onSubmit={handleSignUp} className='flex flex-col gap-5'>
+                <input type="text" name='name' className='input' placeholder='name' />
+                <input type="url" name='photoUrl' className='input' placeholder='photoUrl' />
+                <input type="email" name='email' className='input' placeholder='email' />
+                <input type="password" name='password' className='input' placeholder='password' />
+                <button className='btn' type='submit'>SignUp</button>
+                <p>Already have an account, <Link to={"sign-in"} className='text-blue-400'>SignIn</Link></p>
+                <hr />
+                <button onClick={handleGoogleClick} className='btn btn-circle mx-auto'><FaGoogle></FaGoogle></button>
+            </form>
+        </div >
+    );
+};
+
+export default SignUp;
 ```
