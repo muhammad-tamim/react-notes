@@ -4124,7 +4124,7 @@ export default Dashboard;
 
 ## error handling in react router: 
 
-- errorElement: Handles runtime, loader, and render errors within a specific route and all of its nested child routes. It also catches unmatched paths inside that route branch (if no child route matches). The thrown error can be accessed and displayed using the useRouteError() hook. This hook give you an error object that might include: 
+- errorElement: Handles runtime, loader, and render errors within a specific route and all of its nested child routes. It also catches unmatched paths inside that route branch (if no child route matches and no wildcard route (*) exists). The thrown error can be accessed and displayed using the useRouteError() hook. This hook give you an error object that might include: 
 
   - status --> 400. 500 etc
   - statusText --> “Not Found”, “Internal Server Error” etc
@@ -4180,13 +4180,14 @@ export const AppRoutes = createBrowserRouter([
 
 ```jsx
 import React from 'react';
-import { Link, useRouteError } from 'react-router';
+import { Link, useRouteError, Navigate } from 'react-router';
 
 const ErrorPage = () => {
     const error = useRouteError();
 
     if (error.status === 404) {
-        return <NotFoundPage />;
+        // return <NotFoundPage/>; 
+        <Navigate to="*" replace>
     }
 
     console.error(error);
@@ -4230,6 +4231,14 @@ const NotFoundPage = () => {
 
 export default NotFoundPage;
 ```
+
+here, 
+
+Without replace, you’d end up with this behavior:
+
+- User visits /news-details/123dfdaaf
+- Error → Redirects to /404
+- User presses Back → Goes back to /news-details/123dfdaaf (which errors again 😅)
 
 ## Different way to load data in react router: 
 
