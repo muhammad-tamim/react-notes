@@ -78,7 +78,7 @@
     - [Send a user verification email \& password reset email](#send-a-user-verification-email--password-reset-email)
     - [Delete a user:](#delete-a-user)
   - [example:](#example)
-    - [private route example:](#private-route-example)
+    - [firebase auth with email \& password with update profile, google and github and private route example:](#firebase-auth-with-email--password-with-update-profile-google-and-github-and-private-route-example)
 
 ---
 
@@ -5687,7 +5687,94 @@ deleteUser(user).then(() => {
 
 ## example: 
 
-### private route example:
+### firebase auth with email & password with update profile, google and github and private route example:
+
+```jsx
+// AuthContext.jsx
+import { createContext } from "react";
+
+export const AuthContext = createContext(null)
+```
+
+```jsx
+// AuthProvider.jsx
+import React, { useEffect, useState } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
+import { createUserWithEmailAndPassword, getAuth, GithubAuthProvider, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
+import { app } from '../firebase/firebase.config';
+
+const AuthProvider = ({ children }) => {
+
+    const auth = getAuth(app)
+
+    const googleProvider = new GoogleAuthProvider()
+    const githubProvider = new GithubAuthProvider()
+
+    const [user, setUser] = useState(null)
+    const [loading, setLoading] = useState(true)
+
+
+    const signUpUser = (email, password) => {
+        setLoading(true)
+        return createUserWithEmailAndPassword(auth, email, password);
+    }
+
+    const signInUser = (email, password) => {
+        setLoading(true)
+        return signInWithEmailAndPassword(auth, email, password);
+    }
+
+    const signInUserWithGoogle = () => {
+        setLoading(true)
+        return signInWithPopup(auth, googleProvider)
+    }
+
+    const signInUserWithGithub = () => {
+        setLoading(true)
+        return signInWithPopup(auth, githubProvider)
+    }
+
+    const signOutUser = () => {
+        setLoading(true)
+        return signOut(auth);
+    }
+
+    const updateUserInfo = (updatedData) => {
+        return updateProfile(auth.currentUser, updatedData);
+    }
+
+    // get current user
+    useEffect(() => {
+        const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser)
+            setLoading(false)
+        })
+        return () => {
+            unSubscribe()
+        }
+    }, [auth])
+
+    const userInfo = {
+        user,
+        setUser,
+        loading,
+        signUpUser,
+        signInUser,
+        signInUserWithGoogle,
+        signInUserWithGithub,
+        signOutUser,
+        updateUserInfo
+    }
+
+    return (
+        <AuthContext value={userInfo}>
+            {children}
+        </AuthContext>
+    );
+};
+
+export default AuthProvider;
+```
 
 ```jsx
 // main.jsx
@@ -5706,6 +5793,32 @@ createRoot(document.getElementById('root')).render(
     </AuthProvider>
   </StrictMode>,
 )
+```
+
+```jsx
+// PrivateRoute.jsx
+import React, { use } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { Navigate, useLocation } from 'react-router';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const PrivateRoute = ({ children }) => {
+    const location = useLocation();
+    console.log(location)
+    const { user, loading } = use(AuthContext)
+
+    if (loading) {
+        return <LoadingSpinner></LoadingSpinner>
+    }
+
+    if (!user) {
+        return <Navigate to="/sign-in" state={location.pathname}></Navigate>
+    }
+
+    return children
+};
+
+export default PrivateRoute;
 ```
 
 ```jsx
@@ -5763,113 +5876,16 @@ export const router = createBrowserRouter([
 ```
 
 ```jsx
-// PrivateRoute.jsx
-import React, { use } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import { Navigate, useLocation } from 'react-router';
-import LoadingSpinner from '../components/LoadingSpinner';
-
-const PrivateRoute = ({ children }) => {
-    const location = useLocation();
-    console.log(location)
-    const { user, loading } = use(AuthContext)
-
-    if (loading) {
-        return <LoadingSpinner></LoadingSpinner>
-    }
-
-    if (!user) {
-        return <Navigate to="/sign-in" state={location.pathname}></Navigate>
-    }
-
-    return children
-};
-
-export default PrivateRoute;
-```
-
-```jsx
-// AuthProvider.jsx
-import React, { useEffect, useState } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import { app } from '../firebase/firebase.config';
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
-
-const AuthProvider = ({ children }) => {
-    const auth = getAuth(app);
-    const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(true)
-
-    const signUpUser = (email, password) => {
-        setLoading(true)
-        return createUserWithEmailAndPassword(auth, email, password)
-    }
-
-    const signInUser = (email, password) => {
-        setLoading(true)
-        return signInWithEmailAndPassword(auth, email, password)
-    }
-
-    const provider = new GoogleAuthProvider()
-
-    const signInUserWithGoogle = () => {
-        setLoading(true)
-        return signInWithPopup(auth, provider)
-    }
-
-    const signOutUser = () => {
-        setLoading(true)
-        signOut(auth)
-    }
-
-    useEffect(() => {
-        const unSubscribe = onAuthStateChanged(auth, (CurrentUser) => {
-            setUser(CurrentUser)
-            setLoading(false)
-        })
-        return () => {
-            unSubscribe()
-        }
-    }, [auth])
-
-    const userInfo = {
-        user,
-        loading,
-        signUpUser,
-        signInUser,
-        signInUserWithGoogle,
-        signOutUser
-    }
-
-    return (
-        <AuthContext.Provider value={userInfo}>
-            {children}
-        </AuthContext.Provider>
-    );
-};
-
-export default AuthProvider;
-```
-
-```jsx
-// AuthContext.jsx
-import { createContext } from "react";
-
-export const AuthContext = createContext(null)
-```
-
-```jsx
 // SignIn.jsx
 import React, { use } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { AuthContext } from '../context/AuthContext';
-import { FaGoogle } from 'react-icons/fa';
+import { FaGoogle, FaGithub } from 'react-icons/fa';
 
 const SignIn = () => {
+    const { signInUser, signInUserWithGoogle, signInUserWithGithub } = use(AuthContext)
     const navigate = useNavigate();
     const location = useLocation()
-    console.log(location)
-    const { signInUser, signInUserWithGoogle } = use(AuthContext)
 
     const handleSignIn = (e) => {
         e.preventDefault()
@@ -5878,8 +5894,8 @@ const SignIn = () => {
         const password = e.target.password.value
 
         signInUser(email, password)
-            .then((userCredential) => {
-                console.log(userCredential)
+            .then(() => {
+              console.log('Login Successful')
                 navigate(location?.state || '/')
             })
             .catch((error) => {
@@ -5890,8 +5906,19 @@ const SignIn = () => {
 
     const handleGoogleClick = () => {
         signInUserWithGoogle()
-            .then((result) => {
-                console.log(result)
+            .then(() => {
+                console.log('Login Successful')
+                navigate(location?.state || '/')
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
+    const handleGithubClick = () => {
+        signInUserWithGithub()
+            .then(() => {
+                console.log('Login Successful')
                 navigate(location?.state || '/')
             })
             .catch((error) => {
@@ -5909,6 +5936,7 @@ const SignIn = () => {
                 <p>Don't have an account, <Link to={"sign-up"} className='text-blue-500'>SignUp</Link></p>
                 <hr />
                 <button onClick={handleGoogleClick} className='btn btn-circle mx-auto'><FaGoogle></FaGoogle></button>
+                <button onClick={handleGithubClick} className='btn btn-circle mx-auto'><FaGithub></FaGithub></button>
             </form>
         </div >
     );
@@ -5922,23 +5950,45 @@ export default SignIn;
 import React, { use } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { AuthContext } from '../context/AuthContext';
-import { FaGoogle } from 'react-icons/fa';
+import { FaGoogle, FaGithub } from 'react-icons/fa';
 
 const SignUp = () => {
     const navigate = useNavigate();
-    const { signUpUser, signInUserWithGoogle } = use(AuthContext)
+    const { signUpUser, signInUserWithGoogle, signInUserWithGithub } = use(AuthContext)
 
-    const handleSignUp = (e) => {
+const handleSignUp = (e) => {
         e.preventDefault()
 
-        // const name = e.target.name.value
-        // const photoUrl = e.target.photoUrl.value
+        const name = e.target.name.value
+        const url = e.target.url.value
         const email = e.target.email.value
         const password = e.target.password.value
 
         signUpUser(email, password)
-            .then((userCredential) => {
-                console.log(userCredential)
+            .then((result) => {
+                console.log('Sign Up Successful')
+                const user = result.user
+
+                updateUserInfo({ displayName: name, photoURL: url })
+                    .then(() => {
+                        setUser({ ...user, displayName: name, photoURL: url })
+                        navigate('/news/1')
+                    })
+                    .catch(() => {
+                        setUser(user)
+                    })
+
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+
+
+    const handleGoogleClick = () => {
+        signInUserWithGoogle()
+            .then(() => {
+                console.log('Login Successful')
                 navigate('/')
             })
             .catch((error) => {
@@ -5946,16 +5996,17 @@ const SignUp = () => {
             });
     }
 
-    const handleGoogleClick = () => {
-        signInUserWithGoogle()
-            .then((result) => {
-                console.log(result)
-                navigate('/')
+    const handleGithubClick = () => {
+        signInUserWithGithub()
+            .then(() => {
+                console.log('Login Successful')
+                navigate(location?.state || '/')
             })
             .catch((error) => {
                 console.log(error)
             });
     }
+
     return (
         <div className='min-h-[calc(100vh-148px)] flex flex-col gap-5 items-center justify-center bg-gray-300'>
             <h1>SignIn</h1>
@@ -5968,6 +6019,7 @@ const SignUp = () => {
                 <p>Already have an account, <Link to={"sign-in"} className='text-blue-400'>SignIn</Link></p>
                 <hr />
                 <button onClick={handleGoogleClick} className='btn btn-circle mx-auto'><FaGoogle></FaGoogle></button>
+                <button onClick={handleGithubClick} className='btn btn-circle mx-auto'><FaGithub></FaGithub></button>
             </form>
         </div >
     );
