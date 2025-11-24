@@ -32,6 +32,7 @@
     - [Lifting state up](#lifting-state-up)
   - [data loading in react](#data-loading-in-react)
     - [using use() with suspense:](#using-use-with-suspense)
+    - [using use with no-suspense:](#using-use-with-no-suspense)
     - [using useEffect()](#using-useeffect)
     - [Infinite api call issue:](#infinite-api-call-issue)
   - [react component lifecycle](#react-component-lifecycle)
@@ -2384,6 +2385,44 @@ const User = ({ user }) => {
 export default User;
 ```
 
+
+### using use with no-suspense: 
+
+```jsx
+import React from 'react';
+import Users from './components/Users';
+
+const usersPromise = fetch('http://localhost:3000/users').then(res => res.json())
+
+const App = () => {
+    return (
+        <div>
+            <Users usersPromise={usersPromise}></Users>
+        </div>
+    );
+};
+
+export default App;
+```
+
+```jsx
+import React from 'react';
+import { use } from 'react';
+
+const Users = ({ usersPromise }) => {
+
+    const users = use(usersPromise)
+    console.log(users)
+
+    return (
+        <div>
+          <p>{users.length}</p>
+        </div>
+    );
+};
+
+export default Users;
+```
 
 ### using useEffect()
 
