@@ -2956,8 +2956,62 @@ const ControlComponent = () => {
 export default ControlComponent;
 ```
 
+```js
+import React, { useState } from 'react';
+
+const Test = () => {
+    const [title, setTitle] = useState("I am Title")
+    console.log(title)
+
+    return (
+        <div>
+            <form>
+                <input type="text" value={title} className='input' />
+                {/* can't change because title is a control component */}
+
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
+                    className='input' />
+                {/* with the help of onChange we can change control component */}
+            </form>
+        </div>
+    );
+};
+
+export default Test;
+```
+
 ### Un-controlled Component: 
-A form element whose value is not controlled by React state — it manages its own internal state, usually using useRef, react router `<Form>` + action() or other form libraries (React Hook Form, Formik etc).
+A form element whose value is not controlled by React state — it manages usually using defaultValue ,useRef, react router `<Form>` + action() or other form libraries (React Hook Form, Formik etc).
+
+**With DefaultValue:**
+
+```js
+import React, { useState } from 'react';
+
+const UnControl = () => {
+    const [title, setTitle] = useState("I am Title")
+    console.log(title)
+
+    return (
+        <div>
+            <form>
+                <input type="text" defaultValue={title} className='input' />
+                {/* can change because now title is un-control component */}
+
+                <input type="text" defaultValue={title} onChange={(e) => setTitle(e.target.value)}
+                    className='input' />
+                {/* still title is a un-control component. */}
+            </form>
+        </div>
+    );
+};
+
+export default UnControl;
+```
+
+Note: defaultValue only works on first render means it only sets the initial value.. After that react ignore it and does not control the input, the browser control it. here onChange runs and updates the state, but if we update the state later defaultValue can't update the input state.
+
+
 
 **With useRef:**
 
