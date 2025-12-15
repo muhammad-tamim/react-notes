@@ -94,11 +94,16 @@ Vite is a modern build tool that offers lightning-fast startup and optimized dev
 ```bash
 npm create vite@latest project-name -- --template react
 ```
+For TS: 
+
+```bash
+npm create vite@latest project-name -- --template react-ts
+```
 
 **Step 2:  Install Dependencies**
 
 ```bash
-npm i react-router tailwindcss @tailwindcss/vite -D daisyui@latest
+npm i react-router tailwindcss @tailwindcss/vite -D daisyui@latest 
 ```
 
 **step 3: setup tailwind and daisyui:**
@@ -110,7 +115,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
 })
@@ -125,8 +129,9 @@ Import Tailwind CSS and daisyUi to index.css:
 
 **step 4: setup react router** 
 
+main.jsx:
+
 ```jsx
-// main.jsx
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client';
 import './index.css'
@@ -146,6 +151,130 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 ```
+
+**step 5: setup shadcn**
+
+```
+npm install -D @types/node
+```
+
+tsconfig.json:
+
+```ts
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+tsconfig.app.json:
+
+```ts
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "types": [
+      "vite/client"
+    ],
+    "skipLibCheck": true,
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": [
+    "src"
+  ]
+}
+```
+
+vite.config.ts:
+
+```ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import path from "path"
+
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+})
+```
+
+```
+npx shadcn@latest init
+```
+
+components.json:
+
+```
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/index.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@shared/components",
+    "utils": "@shared/lib/utils",
+    "ui": "@/shared/components/ui",
+    "lib": "@/shared/lib",
+    "hooks": "@/shared/hooks"
+  },
+  "registries": {}
+}
+```
+
 ---
 
 ## Feature based folder structure:
@@ -153,8 +282,6 @@ createRoot(document.getElementById('root')).render(
 ```
 .
 └── my-react-app/
-    ├── node_modules
-    ├── public
     ├── src/
     │   ├── assets
     │   ├── core/
