@@ -46,6 +46,9 @@
 - [Forms](#forms)
     - [Controlled Component:](#controlled-component)
     - [Un-controlled Component:](#un-controlled-component)
+    - [Accessing form data:](#accessing-form-data)
+      - [Manual accessing:](#manual-accessing)
+      - [Using formData():](#using-formdata)
 - [Custom hook:](#custom-hook)
 - [Others](#others)
     - [How to implement dynamic title:](#how-to-implement-dynamic-title)
@@ -3281,6 +3284,39 @@ const Success = () => {
 
 export default Success;
 ```
+
+### Accessing form data:
+
+#### Manual accessing:
+
+```js
+const name = e.target.name.value
+const email = e.target.email.value
+const phone = e.target.phone.value
+const address = e.target.address.value
+const data = {name, email, phone, address}
+```
+
+#### Using formData():
+we can simplify the process using the FormData constructor. FormData automatically collects all input values from the form, and we can easily convert them into a plain JavaScript object using Object.fromEntries():
+
+```js
+const form = e.target
+const formData = new FormData(form)
+const email = formData.get('email')
+const password = formData.get('password')
+console.log(email, password)
+```
+
+```js
+const form = e.target;
+const formData = new FormData(form)
+const coffeeData = Object.fromEntries(formData.entries())
+console.log(coffeeData)
+```
+
+
+
 
 # Custom hook:
 A custom hook is a JavaScript function whose name starts with use and can call other hooks inside it.
