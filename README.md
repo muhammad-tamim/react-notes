@@ -1,7 +1,7 @@
 <h1 align="center">React Notes</h1>
 
 
-- [Create React App using Vite:](#create-react-app-using-vite)
+- [Setup:](#setup)
 - [Feature based folder structure:](#feature-based-folder-structure)
     - [Naming Conventions:](#naming-conventions)
 - [Introduction](#introduction)
@@ -57,7 +57,7 @@
 
 
 
-# Create React App using Vite:
+# Setup:
 
 Vite is a modern build tool that offers lightning-fast startup and optimized development experience for React and other frameworks.
 
